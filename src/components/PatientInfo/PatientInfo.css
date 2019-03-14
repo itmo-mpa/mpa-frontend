@@ -1,0 +1,21 @@
+.PatientInfo{
+    grid-area: aside;
+    background-color: lightskyblue;
+    padding: 1rem 1rem;
+}
+
+.PatientInfo-Anamnesis,.PatientInfo-History, .PatientInfo-NewStatus{
+    margin-top: 1rem;
+    background-color: white;
+    padding: .5rem;
+}
+.PatientInfo-Anamnesis{
+    height: 10rem;
+}
+.PatientInfo-History{
+    height: 20rem;
+}
+
+.PatientInfo-NewStatus{
+    height: 10rem;
+}
