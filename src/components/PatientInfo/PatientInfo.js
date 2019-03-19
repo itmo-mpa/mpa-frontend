@@ -1,7 +1,7 @@
 import {Component} from "react";
 import './PatientInfo.css';
 import React from "react";
-
+import NewStatusForm from "../NewStatusForm/NewStatusForm";
 export default class PatientInfo extends Component {
     render() {
         return (
@@ -15,9 +15,7 @@ export default class PatientInfo extends Component {
                 <section className="PatientInfo-History">
                     <h3>History</h3>
                 </section>
-                <section className="PatientInfo-NewStatus">
-                    <h3>Status form</h3>
-                </section>
+                <NewStatusForm/>    
             </aside>
         );
     }

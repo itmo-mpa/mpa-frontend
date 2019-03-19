@@ -1,3 +1,37 @@
 .States{
     grid-area: states;
+    display: grid;
+    grid-template-areas: 'prev curr next';
+    grid-column-gap: 2rem;
+    grid-template-columns: repeat(3,1fr);
+
+    padding: 2rem;
+    background-color: #999;
+}
+.States article{
+    background-color: #fff;
+}
+.States-Heading{
+    width: 100%;
+    text-align: center;
+}
+.States-Current{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.States-Current-State{
+    height: 30rem;
+}
+.States-Current-Status{
+    height: 15rem;
+}
+
+.States-Next{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.States-Next-State{
+    height: 15rem;
 }

@@ -6,7 +6,6 @@
     grid-template-columns: 18rem 1fr;
     grid-template-areas: 'header header'
                         'aside states';
-    grid-column-gap: 2rem;
 }
 
 .menu{
