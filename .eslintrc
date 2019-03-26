@@ -1,3 +1,6 @@
 {
-  "extends": ["standard", "react-app"]
+  "extends": ["standard", "react-app"],
+  "rules": {
+    "semi": ["error", "always"]
+  }
 }
