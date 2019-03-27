@@ -24,8 +24,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn lint && yarn test:ci",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "pre-commit": "yarn lint && yarn test:ci"
     }
   },
   "browserslist": [
