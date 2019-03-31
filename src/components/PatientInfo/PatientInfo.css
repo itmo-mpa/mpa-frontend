@@ -4,12 +4,12 @@
     padding: 1rem 1rem;
 }
 
-.PatientInfo-Anamnesis,.PatientInfo-History, .PatientInfo-NewStatus{
+.PatientInfo-Description,.PatientInfo-History, .PatientInfo-NewStatus{
     margin-top: 1rem;
     background-color: white;
     padding: .5rem;
 }
-.PatientInfo-Anamnesis{
+.PatientInfo-Description{
     height: 10rem;
 }
 .PatientInfo-History{
