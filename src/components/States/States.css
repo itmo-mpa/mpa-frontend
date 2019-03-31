@@ -8,7 +8,7 @@
     padding: 2rem;
     background-color: #999;
 }
-.States article{
+.States-Prev, .States-Current-State, .States-Current-Status, .States-Next-State{
     background-color: #fff;
 }
 .States-Heading{
