@@ -1,10 +1,10 @@
 import React from 'react';
 import './States.css';
-import {createDraft, getDraft} from '../../Services/draftService';
+import { commitDraft, getDraft } from '../../Services/draftService';
 
 export default class States extends React.Component {
-    componentDidMount() {
-        let {id} = this.props;
+    componentDidMount () {
+        let { id } = this.props;
         // выпилить костыль позже
         if (!id) id = 1;
         getDraft(id).then(
@@ -14,17 +14,17 @@ export default class States extends React.Component {
                 // выпилить костыль, когда можно будет создавать пациентов
             }, (error) => {
                 const tempData = {
-                    "name": "wtf is this",
-                    "description": "????"
+                    'name': 'wtf is this',
+                    'description': '????'
                 };
-                createDraft(id, tempData).then((res) => {
+                commitDraft(id, tempData).then((res) => {
                     console.log('PUT(?) draft', res);
                 });
             }
         );
     }
 
-    render() {
+    render () {
         console.log(this.state);
         return (
             <section className="States">
