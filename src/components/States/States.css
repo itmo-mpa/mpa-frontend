@@ -10,12 +10,13 @@
 }
 .States-Prev, .States-Current-State, .States-Current-Status, .States-Next-State{
     background-color: #fff;
+    padding: 10px;
 }
 .States-Heading{
     width: 100%;
     text-align: center;
 }
-.States-Current{
+.States-Draft{
     display: flex;
     flex-direction: column;
     justify-content: space-between;

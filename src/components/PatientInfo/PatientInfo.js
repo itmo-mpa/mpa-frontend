@@ -7,29 +7,29 @@ export default class PatientInfo extends React.Component {
     state = {};
 
     componentDidMount () {
-      getPatientById(1).then(res => { // TODO: get from props
-        this.setState(res);
-        console.log(res);
-      });
+        getPatientById(1).then(res => { // TODO: get from props
+            this.setState(res);
+            console.log(res);
+        });
     }
     render () {
-      const { name, age } = this.state;
-      return (
-        <aside className="PatientInfo">
-          <section className="PatientInfo-Name">
-            <h3>{name} &nbsp;</h3>
-          </section>
-          <section className="PatientInfo-Description">
-            <h3>Info</h3>
-            <div>
-              <p>age: {age}</p>
-            </div>
-          </section>
-          <section className="PatientInfo-History">
-            <h3>History</h3>
-          </section>
-          <NewStatusForm/>
-        </aside>
-      );
+        const { name, age } = this.state;
+        return (
+            <aside className="PatientInfo">
+                <section className="PatientInfo-Name">
+                    <h3>{name} &nbsp;</h3>
+                </section>
+                <section className="PatientInfo-Description">
+                    <h3>Info</h3>
+                    <div>
+                        <p>age: {age}</p>
+                    </div>
+                </section>
+                <section className="PatientInfo-History">
+                    <h3>History</h3>
+                </section>
+                <NewStatusForm/>
+            </aside>
+        );
     }
 }
