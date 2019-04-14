@@ -1,11 +1,15 @@
 import React from 'react';
 import './States.css';
 import { commitDraft, getDraft } from '../../Services/draftService';
+import StatusDraft from '../StatusDraft/StatusDraft';
+import { NextState } from '../NextState/NextState';
 
 export default class States extends React.Component {
+    state = {};
+
     componentDidMount () {
         let { id } = this.props;
-        // выпилить костыль позже
+        // выпилить костыли позже
         if (!id) id = 1;
         getDraft(id).then(
             (draft) => {
@@ -14,42 +18,62 @@ export default class States extends React.Component {
                 // выпилить костыль, когда можно будет создавать пациентов
             }, (error) => { //eslint-disable-line
                 const tempData = {
-                    'name': 'wtf is this',
-                    'description': '????'
+                    'description': 'S'
                 };
                 commitDraft(id, tempData).then((res) => {
                     console.log('PUT(?) draft', res);
                 });
             }
         );
+        this.setState({
+            nextStates: [
+                {
+                    id: 1,
+                    name: 'next state 1',
+                    description: 'next state description',
+                    recommended: true
+                },
+                {
+                    id: 2,
+                    name: 'next state 2',
+                    description: 'next state description',
+                    recommended: false
+                },
+                {
+                    id: 3,
+                    name: 'next state 3',
+                    description: 'next state description',
+                    recommended: false
+                },
+                {
+                    id: 4,
+                    name: 'next state 4',
+                    description: 'next state description',
+                    recommended: false
+                }
+            ]
+
+        });
     }
 
     render () {
-        console.log(this.state);
+        const { nextStates } = this.state;
         return (
             <section className="States">
-                <div className="States-Prev"><h2 className='States-Heading'>Previous State</h2></div>
-                <div className="States-Draft">
-                    <div className="States-Current-State">
-                        <h2 className='States-Heading'>State Draft</h2>
-                        <p>
-                            name: {this.state && this.state.name}
-                        </p>
-                        <p>
-                            description: {this.state && this.state.description}
-                        </p>
+                <div className="States-PrevWrap States-Wrap">
+                    <div className="States-Prev">
+                        <h2 className='States-Heading'>Previous State</h2>
+                        <p>тут что-то будет</p>
                     </div>
-                    <div className="States-Current-Status"><h2 className='States-Heading'>Current Status</h2></div>
                 </div>
-                <div className="States-Next">
-                    <div className="States-Next-State">
-                        <h2 className='States-Heading'>Next State</h2>
-                    </div>
-                    <div className="States-Next-State">
-                        <h2 className='States-Heading'>Next State</h2>
-                    </div>
-                    <div className="States-Next-State">
-                        <h2 className='States-Heading'>Next State</h2>
+                <div className="States-DraftWrap States-Wrap">
+                    <StatusDraft/>
+                </div>
+                <div className="States-NextWrap States-Wrap">
+                    <div className="States-Next">
+                        {nextStates && nextStates.map(nextState =>
+                            <NextState {...nextState} key={nextState.id}/>
+                        )}
                     </div>
                 </div>
             </section>

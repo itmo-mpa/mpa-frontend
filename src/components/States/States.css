@@ -1,38 +1,54 @@
-.States{
+.States {
     grid-area: states;
-    display: grid;
-    grid-template-areas: 'prev curr next';
-    grid-column-gap: 2rem;
-    grid-template-columns: repeat(3,1fr);
-
-    padding: 2rem;
-    background-color: #999;
+    display: flex;
+    overflow: hidden;
+    padding-bottom: 1rem;
+    padding-left: 1rem;
+    background-color: #B4BDCB;
+    align-items: flex-start;
 }
-.States-Prev, .States-Current-State, .States-Current-Status, .States-Next-State{
+
+.States > *:not(:last-child) {
+    margin-right: 1rem;
+}
+.States-Wrap {
+    overflow-y: auto;
+    height: 100%;
+}
+.States-Prev, .States-Draft, .States-NextState {
+    margin-top: 1rem;
     background-color: #fff;
     padding: 10px;
 }
-.States-Heading{
+.States-PrevWrap {
+    width: 400px;
+
+}
+.States-Prev {
+    height: 500px;
+    border-radius: 8px;
+}
+
+.States-DraftWrap {
+    flex: 1 1 100%;
+}
+.States-Draft {
+    border-radius: 8px;
+}
+
+.States-Heading {
     width: 100%;
     text-align: center;
 }
-.States-Draft{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-.States-Current-State{
-    height: 30rem;
-}
-.States-Current-Status{
-    height: 15rem;
+
+.States-NextWrap {
+    width: 400px;
 }
 
-.States-Next{
+.States-Next {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-}
-.States-Next-State{
-    height: 15rem;
+    height: auto;
+    overflow-x: visible;
+    overflow-y: scroll;
 }
