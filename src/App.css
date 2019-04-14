@@ -1,13 +1,16 @@
 .App {
     display: grid;
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh -  2px);
+    overflow: hidden;
     grid-template-rows: max-content 1fr;
     grid-template-columns: 18rem 1fr;
     grid-template-areas: 'header header'
                         'aside states';
 }
-
+*{
+    box-sizing: border-box;
+}
 .menu{
     grid-area: header;
 }

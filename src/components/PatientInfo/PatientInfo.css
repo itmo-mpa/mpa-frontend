@@ -2,17 +2,23 @@
     grid-area: aside;
     background-color: lightskyblue;
     padding: 1rem 1rem;
+    display: flex;
+    flex-direction: column;
 }
-
-.PatientInfo-Description,.PatientInfo-History, .PatientInfo-NewStatus{
-    margin-top: 1rem;
+.PatientInfo h3{
+    text-align: center;
+}
+.PatientInfo-Name,.PatientInfo-Description,.PatientInfo-History{
     background-color: white;
-    padding: .5rem;
+    padding: .5rem 1rem;
+}
+.PatientInfo-Name,.PatientInfo-Description{
+    margin-bottom: 1rem;
 }
 .PatientInfo-Description{
     height: 10rem;
 }
 .PatientInfo-History{
-    height: 20rem;
+    flex: 1 1 100%;
 }
 
