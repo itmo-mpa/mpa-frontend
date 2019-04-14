@@ -6,6 +6,7 @@
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-scripts": "2.1.8",
+    "react-semantic-ui-datepickers": "0.0.0-semantically-released",
     "semantic-ui-react": "^0.86.0"
   },
   "scripts": {
@@ -14,7 +15,7 @@
     "test": "react-scripts test",
     "test:ci": "cross-env CI=true react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint ./src/**.js --fix",
+    "lint": "eslint ./src/**/*.js --fix",
     "commit": "npx git-cz"
   },
   "config": {
