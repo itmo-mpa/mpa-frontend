@@ -2,8 +2,7 @@
     grid-area: states;
     display: flex;
     overflow: hidden;
-    padding-bottom: 1rem;
-    padding-left: 1rem;
+    padding: 0 1rem 1rem;
     background-color: #B4BDCB;
     align-items: flex-start;
 }

@@ -1,82 +1,73 @@
 import React from 'react';
 import './States.css';
-import { commitDraft, getDraft } from '../../Services/draftService';
+import {createDraft, getDraft, getNextStates} from '../../Services/draftService';
 import StatusDraft from '../StatusDraft/StatusDraft';
 import { NextState } from '../NextState/NextState';
 
 export default class States extends React.Component {
-    state = {};
+    state = {
+        nextStates: [],
+        state: null
+    };
 
-    componentDidMount () {
-        let { id } = this.props;
-        // выпилить костыли позже
-        if (!id) id = 1;
-        getDraft(id).then(
+    componentWillReceiveProps (nextProps) {
+        let { patientId, status } = nextProps;
+        if (!patientId) return;
+        getDraft(patientId).then(
             (draft) => {
                 this.setState(draft);
                 console.log('GET draft', draft);
-                // выпилить костыль, когда можно будет создавать пациентов
             }, (error) => { //eslint-disable-line
-                const tempData = {
-                    'description': 'S'
+                const draftInitData = {
+                    stateId: status.state.id,
+                    medicines: [],
+                    attributes: {}
                 };
-                commitDraft(id, tempData).then((res) => {
-                    console.log('PUT(?) draft', res);
+                createDraft(patientId, draftInitData).then((res) => {
+                    console.log('PUT draft', res);
                 });
-            }
-        );
-        this.setState({
-            nextStates: [
-                {
-                    id: 1,
-                    name: 'next state 1',
-                    description: 'next state description',
-                    recommended: true
-                },
-                {
-                    id: 2,
-                    name: 'next state 2',
-                    description: 'next state description',
-                    recommended: false
-                },
-                {
-                    id: 3,
-                    name: 'next state 3',
-                    description: 'next state description',
-                    recommended: false
-                },
-                {
-                    id: 4,
-                    name: 'next state 4',
-                    description: 'next state description',
-                    recommended: false
-                }
-            ]
-
-        });
+            });
     }
 
+    onNextStates = (nextStates) => {
+        nextStates && nextStates.length && this.setState({
+            ...this.state,
+            nextStates
+        });
+    };
+    confirmState = (state)=>{
+        this.setState({
+            ...this.state,
+            state
+        });
+    };
     render () {
-        const { nextStates } = this.state;
+        const { patientId, status } = this.props;
+        const { nextStates, state } = this.state;
         return (
-            <section className="States">
-                <div className="States-PrevWrap States-Wrap">
-                    <div className="States-Prev">
-                        <h2 className='States-Heading'>Previous State</h2>
-                        <p>тут что-то будет</p>
+            <React.Fragment>
+                {status && (<section className="States">
+                    <div className="States-PrevWrap States-Wrap">
+                        <div className="States-Prev">
+                            <h2 className='States-Heading'>Current State</h2>
+                            <p>name: {status.state.name}</p>
+                            <p>description: {status.state.description}</p>
+                            <p>updated on: {status.submittedOn}</p>
+                        </div>
                     </div>
-                </div>
-                <div className="States-DraftWrap States-Wrap">
-                    <StatusDraft/>
-                </div>
-                <div className="States-NextWrap States-Wrap">
-                    <div className="States-Next">
-                        {nextStates && nextStates.map(nextState =>
-                            <NextState {...nextState} key={nextState.id}/>
-                        )}
+                    <div className="States-DraftWrap States-Wrap">
+                        <StatusDraft patientId={patientId} state={state || status.state} status={status} onNextStates={this.onNextStates}/>
                     </div>
-                </div>
-            </section>
+                    {nextStates.length ? <div className="States-NextWrap States-Wrap">
+                        <div className="States-Next">
+                            {nextStates.map(nextState =>
+                                <NextState {...nextState} key={nextState.id} confirmState={this.confirmState}/>
+                            )}
+                        </div>
+                    </div> : null
+                    }
+                </section>)}
+            </React.Fragment>
         );
     }
 }
