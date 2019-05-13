@@ -3,3 +3,8 @@
     background-color: white;
     padding: .5rem;
 }
+
+.NewStatus-Field {
+    margin-top: -19px !important;
+    padding-right: 0 !important;
+}

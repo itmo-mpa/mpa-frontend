@@ -1,3 +1,21 @@
 .Draft{
 
 }
+
+.Draft-StatusFormContainer {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.Draft-PlusButton {
+    cursor: pointer;
+}
+
+.Draft-StatusForm {
+
+}
+
+.Draft-StatusForm--Margined {
+    margin-left: calc(21px + .25rem) !important;
+}
