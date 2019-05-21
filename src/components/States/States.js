@@ -3,6 +3,7 @@ import './States.css';
 import { commitDraft, getDraft } from '../../Services/draftService';
 import StatusDraft from '../StatusDraft/StatusDraft';
 import { NextState } from '../NextState/NextState';
+import AssociationForm from '../AssoсiationForm/AssociationForm';
 
 export default class States extends React.Component {
     state = {};
@@ -62,6 +63,7 @@ export default class States extends React.Component {
             <section className="States">
                 <div className="States-PrevWrap States-Wrap">
                     <div className="States-Prev">
+                        <AssociationForm />
                         <h2 className='States-Heading'>Previous State</h2>
                         <p>тут что-то будет</p>
                     </div>

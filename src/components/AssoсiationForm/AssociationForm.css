@@ -1,0 +1,8 @@
+.AssociationForm__Icon {
+    position: absolute;
+    cursor: pointer;
+}
+
+.AssociationForm__Icon--right {
+    right: 5px;
+}

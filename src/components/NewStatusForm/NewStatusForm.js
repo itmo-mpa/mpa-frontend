@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Button, Select, Input } from 'semantic-ui-react';
 import './NewStatusForm.css';
+import AssociationForm from '../AssoсiationForm/AssociationForm';
 
 const options = [
     { key: '1', text: 'type1', value: 'type1' },
@@ -29,6 +30,9 @@ export default class NewStatusForm extends React.Component {
                             />
                         </Form.Field>
                         <Button type='submit' basic color='green' >Submit</Button>
+                        <AssociationForm style={{
+                          position: 'relative'
+                        }} />
                     </Form.Group>
                 </Form>
             </section>

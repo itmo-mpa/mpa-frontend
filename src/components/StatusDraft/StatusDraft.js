@@ -1,7 +1,8 @@
 import React from 'react';
+import { Button, Divider, Icon } from 'semantic-ui-react';
 import NewStatusForm from '../NewStatusForm/NewStatusForm';
 import './StatusDraft.css';
-import { Button, Divider, Icon } from 'semantic-ui-react';
+import AssociationForm from '../AssoсiationForm/AssociationForm';
 
 export default class StatusDraft extends React.Component {
     state = {
@@ -26,13 +27,14 @@ export default class StatusDraft extends React.Component {
 
         return (
             <div className='States-Draft Draft'>
+                <AssociationForm />
                 <h2 className='States-Heading'>State Draft</h2>
                 <p>
                     description: {description}
                 </p>
                 <Divider fitted />
                 {new Array(symptomsAmount).fill(true).map((el, index) =>
-                  <div className='Draft-StatusFormContainer'>
+                  <div className='Draft-StatusFormContainer' key={index}>
                     {index === symptomsAmount - 1 &&
                       <Icon
                         name='plus circle'

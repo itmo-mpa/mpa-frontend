@@ -1,9 +1,11 @@
 import React from 'react';
 import { Button, Label } from 'semantic-ui-react';
 import './NextState.css';
+import AssociationForm from '../AssoсiationForm/AssociationForm';
 
 export const NextState = (props) => (
     <div className="States-NextState NextState">
+        <AssociationForm position='right' />
         <Label className="NextState-Label"
             color={props.recommended ? 'green' : 'red'} tag>
             {props.recommended ? 'recommended' : 'not recommended'}
