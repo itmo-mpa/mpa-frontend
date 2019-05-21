@@ -1,19 +1,21 @@
 import React from 'react';
 import { Sidebar, Menu, Ref } from 'semantic-ui-react';
 import NewPatientForm from '../NewPatientFormModal/NewPatientFormModal';
-
-const patients = [
-    { name: 'Василий Петров', gender: 'male', birthdate: '01.01.1970' },
-    { name: 'Петр Васечкин', gender: 'male', birthdate: '01.01.1970' }
-];
+import { getPatients } from '../../Services/patientService';
 
 export default class SidebarList extends React.Component {
     state = {
         opened: false,
-        animating: false
+        animating: false,
+        patients: []
     };
 
     sidebarRef = null;
+    componentDidMount () {
+        getPatients().then(patients => {
+            this.setState({ patients });
+        });
+    }
 
     componentWillReceiveProps (nextProps) {
         if (!nextProps.trigger || nextProps.trigger === this.props.trigger) {
@@ -31,7 +33,7 @@ export default class SidebarList extends React.Component {
         }, () => {
             document.addEventListener('click', this.closeSidebar);
         });
-    }
+    };
 
     closeSidebar = (e) => {
         if (this.state.animating || this.sidebarRef.contains(e.target)) {
@@ -44,11 +46,21 @@ export default class SidebarList extends React.Component {
         });
 
         document.removeEventListener('click', this.closeSidebar);
-    }
+    };
 
+    patientOnClick (e, patient) {
+        const { patientOnChange } = this.props;
+
+        patientOnChange(patient);
+        document.body.click();
+    }
     render () {
+        const { patients } = this.state;
+
         return (
-            <Ref innerRef={node => { this.sidebarRef = node; }}>
+            <Ref innerRef={node => {
+                this.sidebarRef = node;
+            }}>
                 <Sidebar
                     as={Menu}
                     animation='overlay'
@@ -61,12 +73,15 @@ export default class SidebarList extends React.Component {
                     <h2>Patients</h2>
                     {patients.map((patient, index) => {
                         return (
-                            <Menu.Item as='div' key={index}>
-                                {patient.name} ({patient.birthdate})
+                            <Menu.Item as='div'
+                                key={patient.name}
+                                onClick={(e) => this.patientOnClick(e, patient)}
+                                style={{ cursor: 'pointer' }}>
+                                {patient.name} ({patient.birthDate})
                             </Menu.Item>
                         );
                     })}
-                    <Menu.Item as={NewPatientForm} />
+                    <Menu.Item as={NewPatientForm}/>
                 </Sidebar>
             </Ref>
         );

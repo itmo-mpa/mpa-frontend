@@ -1,22 +1,33 @@
 import './PatientInfo.css';
 import React from 'react';
-import { getPatientById } from '../../Services/patientService';
-export default class PatientInfo extends React.Component {
-    state = {};
+import { getHistory } from '../../Services/draftService';
+import AssociationForm from '../AssoсiationForm/AssociationForm';
 
-    componentDidMount () {
-        getPatientById(1).then(res => { // TODO: get from props
-            this.setState({ res });
-        });
-        // временнный костыль
-        this.setState({
-            name: 'test test test',
-            age: '14.04.2019',
-            gender: 'Unknown'
+export default class PatientInfo extends React.Component {
+    state = {
+        history: []
+    };
+
+    componentWillReceiveProps (nextProps) {
+        const { patient } = nextProps;
+
+        patient && getHistory(patient.id).then(history => {
+            console.log('GET history', history);
+            this.setState({ history });
         });
     }
+
     render () {
-        const { name, age, gender } = this.state;
+        const { name, birthDate } = this.props.patient;
+        const { history } = this.state;
+
+        const dateObj = new Date(birthDate);
+        const year = dateObj.getFullYear();
+        const month = dateObj.getMonth();
+        const now = new Date();
+
+        const age = now.getFullYear() - year + (now.getMonth() - month < 0 ? 1 : 0);
+
         return (
             <aside className="PatientInfo">
                 <section className="PatientInfo-Name">
@@ -25,12 +36,16 @@ export default class PatientInfo extends React.Component {
                 <section className="PatientInfo-Description">
                     <h3>Info</h3>
                     <div>
-                        <p>Birth date: {age}</p>
-                        <p>Gender: {gender}</p>
+                        <div style={{ position: 'relative' }}>
+                            <AssociationForm position='right' getData={() => `eq($patient.age, ${age})`} />
+                            <p>Birth date: {birthDate}</p>
+                        </div>
+                        {/* <p>Gender: {gender}</p> */}
                     </div>
                 </section>
                 <section className="PatientInfo-History">
                     <h3>History</h3>
+                    {history && history !== [] && <span>{JSON.stringify(history)}</span>}
                 </section>
             </aside>
         );
