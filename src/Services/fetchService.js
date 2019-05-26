@@ -1,4 +1,4 @@
-const baseUrl = 'http://188.242.178.146:8080';
+const baseUrl = 'https://cors-anywhere.herokuapp.com/http://188.242.178.146:8080';
 
 export function get (url) {
     const params = {
