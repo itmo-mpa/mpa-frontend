@@ -17,7 +17,7 @@ export const create = (id, draft) => {
 
         const result = await service.createDraft(id, draft);
 
-        console.log('CREATE DRAFT', await result.json());
+        console.log('CREATE DRAFT', result);
         dispatch(actionCreators.put(draft));
     };
 };
@@ -35,3 +35,9 @@ export const clear = () => {
         dispatch(actionCreators.clear());
     };
 };
+
+export const updateState = (state) => {
+    return dispatch => {
+        dispatch(actionCreators.updateState(state));
+    }
+}

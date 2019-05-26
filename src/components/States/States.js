@@ -29,17 +29,15 @@ export class States extends React.Component {
             const draftInitData = {
                 stateId: status.state.id,
                 medicines: [],
-                attributes: {}
+                attributes: []
             };
             await this.props.createDraft(patientId, draftInitData);
         }
     }
 
     confirmState = (state) => {
-        this.setState({
-            ...this.state,
-            state
-        });
+        this.props.clearDraft();
+        this.props.updateState(state);
     };
 
     associationData = () => {
@@ -47,9 +45,8 @@ export class States extends React.Component {
     }
 
     render () {
-        const { patientId, status, nextStates } = this.props;
-        const { state } = this.state;
-
+        const { patientId, status, nextStates, draft } = this.props;
+    
         return (
             <React.Fragment>
                 {status && (<section className="States">
@@ -63,7 +60,7 @@ export class States extends React.Component {
                         </div>
                     </div>
                     <div className="States-DraftWrap States-Wrap">
-                        <StatusDraft patientId={patientId} state={state || status.state} status={status}/>
+                        <StatusDraft patientId={patientId} state={draft.state} status={status}/>
                         <Associations />
                     </div>
                     {nextStates.length ? <div className="States-NextWrap States-Wrap">
@@ -89,6 +86,8 @@ export default connect(
     }),
     {
         getDraft: draftThunks.get,
-        createDraft: draftThunks.create
+        createDraft: draftThunks.create,
+        clearDraft: draftThunks.clear,
+        updateState: draftThunks.updateState
     }
 )(States);
