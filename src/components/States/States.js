@@ -46,7 +46,7 @@ export class States extends React.Component {
 
     render () {
         const { patientId, status, nextStates, draft } = this.props;
-    
+
         return (
             <React.Fragment>
                 {status && (<section className="States">

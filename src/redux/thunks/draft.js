@@ -39,5 +39,5 @@ export const clear = () => {
 export const updateState = (state) => {
     return dispatch => {
         dispatch(actionCreators.updateState(state));
-    }
-}
+    };
+};
