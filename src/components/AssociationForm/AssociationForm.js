@@ -8,7 +8,7 @@ export class AssociationForm extends Component {
   state = {
       text: '',
       showModal: false
-  }
+  };
 
   onSubmit = () => {
       if (typeof this.props.getData !== 'function') {
@@ -28,7 +28,7 @@ export class AssociationForm extends Component {
 
   closeModal = () => {
       this.setState({ showModal: false });
-  }
+  };
 
   render () {
       const { position, style = {} } = this.props;

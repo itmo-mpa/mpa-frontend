@@ -4,7 +4,7 @@ import * as service from '../../Services/draftService';
 export const get = (patientId) => {
     return async (dispatch) => {
         const states = await service.getNextStates(patientId);
-
+        console.log('GET NEXT', states);
         dispatch(actionCreaters.put(states));
 
         return states;

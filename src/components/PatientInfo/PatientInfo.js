@@ -47,7 +47,13 @@ export class PatientInfo extends React.Component {
                 </section>
                 <section className="PatientInfo-History">
                     <h3>History</h3>
-                    {history && history !== [] && <span>{JSON.stringify(history)}</span>}
+                    {history && history !== {} && history.map( event=>
+                        <div key={event.id}>
+                            <p>date:{event.submittedOn}</p>
+                            <p>name:{event.state.name}</p>
+                            <br/>
+                        </div>)
+                    }
                 </section>
             </aside>
         );

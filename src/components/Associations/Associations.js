@@ -4,7 +4,7 @@ import * as associationsThunks from '../../redux/thunks/associations';
 
 export class Associations extends Component {
     async componentWillMount () {
-        await this.props.getAssociations();
+        await this.props.getAssociations(this.props.patientId);
 
         console.log('GET Associations', this.props.associations);
     }
@@ -14,12 +14,11 @@ export class Associations extends Component {
 
         return (
             <div className='States-Draft'>
-                <h2>Associations</h2>
+                <h2>Ассоциации</h2>
                 {associations.map(association => {
                     return (
-                        <div>
-                            <p><b>{association.predicate}</b></p>
-                            <p>{association.text}</p>
+                        <div key={association.id}>
+                            <p><b>{association.type}: </b>{association.text}</p>
                         </div>
                     );
                 })}
@@ -30,7 +29,8 @@ export class Associations extends Component {
 
 export default connect(
     store => ({
-        associations: store.associations
+        associations: store.associations,
+        patientId: store.patient.id
     }),
     {
         getAssociations: associationsThunks.get

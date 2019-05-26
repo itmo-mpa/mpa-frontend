@@ -4,7 +4,7 @@ import * as actionCreators from '../reducers/draft';
 export const get = (id) => {
     return async (dispatch) => {
         const draft = await service.getDraft(id);
-
+        console.log('GET DRAFT DATA', draft);
         dispatch(actionCreators.put(draft));
 
         return draft;
@@ -25,8 +25,6 @@ export const create = (id, draft) => {
 export const commit = (id, draft) => {
     return async dispatch => {
         await service.commitDraft(id, draft);
-
-        dispatch(actionCreators.put(draft));
     };
 };
 

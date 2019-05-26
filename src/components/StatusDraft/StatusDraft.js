@@ -7,6 +7,7 @@ import AssociationForm from '../AssociationForm/AssociationForm';
 import * as draftThunks from '../../redux/thunks/draft';
 import * as nextStatesThunks from '../../redux/thunks/nextStates';
 import * as diseaseThunks from '../../redux/thunks/disease';
+import store from '../../redux';
 
 export class StatusDraft extends React.Component {
     state = {
@@ -43,14 +44,17 @@ export class StatusDraft extends React.Component {
 
     onDraftUpdate = async (attribute) => {
         const { patientId, state, draft } = this.props;
-
-        console.log(draft);
-
-        if (attribute) {
-            draft.attributes = [
-                ...draft.attributes,
-                attribute
-            ];
+        if(!state) return;
+        if (draft && draft.attributes && attribute) {
+            let updated = false;
+            draft.attributes.map((attr) => {
+                if (attr.id === attribute.id) {
+                    updated = true;
+                    attr.value = attribute.value;
+                }
+                return attr;
+            });
+            if (!updated) draft.attributes.push(attribute);
         }
 
         const data = {
@@ -64,27 +68,44 @@ export class StatusDraft extends React.Component {
     };
 
     render () {
-        const { status, patientId, state, disease } = this.props;
-        const attributes = status.attributes || [];
+        const { status, patientId, draft, disease } = this.props;
+        const currentState = draft.state || status.state;
+        let attributes = draft.attributes || [];
+
         const { symptomsAmount } = this.state;
+        let diseaseData = disease.filter(diseaseItem =>{
+            return !attributes.some(attribute => attribute.id === diseaseItem.id);
+        });
+        console.log('STORE', store.getState());
+        console.log('state', this.props);
 
         return (
             <div className='States-Draft Draft'>
-                <AssociationForm />
-                <h2 className='States-Heading'>State Draft</h2>
+                <AssociationForm/>
+                <h2 className='States-Heading'>Черновик состояния</h2>
                 <p>
                     last updated: {status.submittedOn}
                 </p>
-                {<p>
-                    {JSON.stringify(state)}
-                </p>
-                }
-                {<p>
-                    {JSON.stringify(attributes)}
-                </p>
-                }
+                { currentState && <div>
+                    <p>Текущее состояние</p>
+                    <p>state name: {currentState.name}</p>
+                    <p>
+                        description:{currentState.description}
+                    </p>
+                </div>
+                    }
                 <Divider fitted/>
-                {new Array(symptomsAmount).fill(true).map((el, index) =>
+                {attributes && attributes.map(attribute => (
+                    <NewStatusForm
+                        key={attribute.id}
+                        patientId={patientId}
+                        statusId={status.id}
+                        onDraftUpdate={this.onDraftUpdate}
+                        diseaseData={[attribute]}
+                        attribute={attribute}
+                    />
+                ))}
+                {diseaseData  && new Array(symptomsAmount).fill(true).map((el, index) =>
                     <div className='Draft-StatusFormContainer' key={index}>
                         {index === symptomsAmount - 1 &&
                         <Icon
@@ -100,7 +121,7 @@ export class StatusDraft extends React.Component {
                             patientId={patientId}
                             statusId={status.id}
                             onDraftUpdate={this.onDraftUpdate}
-                            diseaseData={disease}
+                            diseaseData={diseaseData}
                         />
                     </div>
                 )}

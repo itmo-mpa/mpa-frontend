@@ -4,7 +4,7 @@ import * as service from '../../Services/draftService';
 export const get = (patientId) => {
     return async (dispatch) => {
         const history = await service.getHistory(patientId);
-
+        console.log('GET HISTORY', history);
         dispatch(actionCreaters.put(history));
     };
 };
