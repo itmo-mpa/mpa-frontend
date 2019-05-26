@@ -12,11 +12,11 @@ export const clear = () => ({
 
 export default (state = [], action) => {
     switch (action.type) {
-        case DISEASE_PUT:
-            return action.payload;
-        case DISEASE_CLEAR:
-            return [];
-        default:
-            return state;
+    case DISEASE_PUT:
+        return action.payload;
+    case DISEASE_CLEAR:
+        return [];
+    default:
+        return state;
     }
 };

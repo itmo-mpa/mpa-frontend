@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { Sidebar, Menu, Ref } from 'semantic-ui-react';
 import NewPatientForm from '../NewPatientFormModal/NewPatientFormModal';
 import * as patientThunks from '../../redux/thunks/patient';
@@ -8,7 +8,7 @@ import * as patientsThunks from '../../redux/thunks/patients';
 export class SidebarList extends React.Component {
     state = {
         opened: false,
-        animating: false,
+        animating: false
     };
 
     sidebarRef = null;
@@ -48,7 +48,7 @@ export class SidebarList extends React.Component {
     };
 
     async patientOnClick (e, patient) {
-        await this.props.getPatient(patient.id)
+        await this.props.getPatient(patient.id);
 
         document.body.click();
     }

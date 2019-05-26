@@ -14,20 +14,20 @@ export const clear = () => ({
 export const add = association => ({
     type: ASSOCIATIONS_ADD,
     payload: association
-})
+});
 
 export default (state = [], action) => {
     switch (action.type) {
-        case ASSOCIATIONS_PUT:
-            return action.payload;
-        case ASSOCIATIONS_CLEAR:
-            return [];
-        case ASSOCIATIONS_ADD:
-            return [
-                ...state,
-                action.payload
-            ];
-        default:
-            return state;
+    case ASSOCIATIONS_PUT:
+        return action.payload;
+    case ASSOCIATIONS_CLEAR:
+        return [];
+    case ASSOCIATIONS_ADD:
+        return [
+            ...state,
+            action.payload
+        ];
+    default:
+        return state;
     }
 };

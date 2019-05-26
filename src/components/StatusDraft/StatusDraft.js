@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { Button, Divider, Icon } from 'semantic-ui-react';
 import NewStatusForm from '../NewStatusForm/NewStatusForm';
 import './StatusDraft.css';
@@ -19,11 +19,11 @@ export class StatusDraft extends React.Component {
             await this.props.getDraft(patientId);
 
             console.log('DRAFT', this.props.draft);
-            
+
             await this.props.getDisease(patientId);
 
             console.log('GET diseaseData', this.props.disease);
-            
+
             await this.props.getNextStates(patientId);
         }
     }
@@ -51,7 +51,7 @@ export class StatusDraft extends React.Component {
         }
 
         const data = {
-            attributes: (draft  && draft.attributes) || [],
+            attributes: (draft && draft.attributes) || [],
             medicines: (draft && draft.medicines) || [],
             stateId: state.id
         };
@@ -122,4 +122,4 @@ export default connect(
         getNextStates: nextStatesThunks.get,
         getDisease: diseaseThunks.get
     }
-)(StatusDraft)
+)(StatusDraft);

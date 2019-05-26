@@ -14,7 +14,7 @@ export const create = data => {
         await service.createAssociation(data);
 
         dispatch(actionCreaters.add(data));
-    }
-}
+    };
+};
 
 export const clear = () => dispatch => dispatch(actionCreaters.clear());

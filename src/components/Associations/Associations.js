@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import * as associationsThunks from '../../redux/thunks/associations';
 
 export class Associations extends Component {

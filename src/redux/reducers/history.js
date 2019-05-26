@@ -12,11 +12,11 @@ export const clear = () => ({
 
 export default (state = [], action) => {
     switch (action.type) {
-        case HISTORY_PUT:
-            return action.payload;
-        case HISTORY_CLEAR:
-            return [];
-        default:
-            return state;
+    case HISTORY_PUT:
+        return action.payload;
+    case HISTORY_CLEAR:
+        return [];
+    default:
+        return state;
     }
 };

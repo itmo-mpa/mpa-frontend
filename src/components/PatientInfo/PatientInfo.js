@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import './PatientInfo.css';
 import AssociationForm from '../AssociationForm/AssociationForm';
 import * as historyThunks from '../../redux/thunks/history';

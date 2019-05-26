@@ -14,7 +14,7 @@ export const create = (data) => {
         await service.createPatient(data);
 
         // TODO: maybe dispatch something??
-    }
-}
+    };
+};
 
 export const clear = () => dispatch => dispatch(actionCreaters.clear());

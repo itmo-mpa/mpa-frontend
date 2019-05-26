@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import './States.css';
 import * as draftThunks from '../../redux/thunks/draft';
 import StatusDraft from '../StatusDraft/StatusDraft';
@@ -24,7 +24,7 @@ export class States extends React.Component {
         }
 
         try {
-            await this.props.getDraft(patientId)
+            await this.props.getDraft(patientId);
         } catch (e) {
             const draftInitData = {
                 stateId: status.state.id,

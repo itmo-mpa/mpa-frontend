@@ -17,7 +17,7 @@ export default class NewStatusForm extends React.Component {
         const name = this.props.diseaseData.find(data => data.id === healthMatter).name;
 
         onDraftUpdate(
-            {id: healthMatter, value: result, name}
+            { id: healthMatter, value: result, name }
         );
     };
 

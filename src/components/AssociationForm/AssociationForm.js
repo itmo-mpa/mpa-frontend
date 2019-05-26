@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Form, Icon, Modal, TextArea } from 'semantic-ui-react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import './AssociationForm.css';
 import * as associationsThunks from '../../redux/thunks/associations';
 

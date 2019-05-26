@@ -1,4 +1,4 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 import associations from './associations';
 import draft from './draft';
 import patient from './patient';
@@ -15,4 +15,4 @@ export default combineReducers({
     nextStates,
     disease,
     history
-})
+});

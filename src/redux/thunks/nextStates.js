@@ -12,5 +12,5 @@ export const get = (patientId) => {
 };
 
 export const clear = () => {
-    return (dispatch) => dispatch(actionCreaters.clear()); 
+    return (dispatch) => dispatch(actionCreaters.clear());
 };

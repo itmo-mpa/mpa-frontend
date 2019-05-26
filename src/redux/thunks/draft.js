@@ -8,8 +8,8 @@ export const get = (id) => {
         dispatch(actionCreators.put(draft));
 
         return draft;
-    }
-}
+    };
+};
 
 export const create = (id, draft) => {
     return async (dispatch) => {
@@ -19,20 +19,19 @@ export const create = (id, draft) => {
 
         console.log('CREATE DRAFT', await result.json());
         dispatch(actionCreators.put(draft));
-    }
-}
+    };
+};
 
 export const commit = (id, draft) => {
     return async dispatch => {
         await service.commitDraft(id, draft);
 
         dispatch(actionCreators.put(draft));
-    }
-}
+    };
+};
 
 export const clear = () => {
     return dispatch => {
         dispatch(actionCreators.clear());
-    }
-}
-
+    };
+};
