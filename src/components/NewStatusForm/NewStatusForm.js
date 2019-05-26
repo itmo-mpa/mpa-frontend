@@ -38,7 +38,6 @@ export default class NewStatusForm extends React.Component {
     onHMChange = (e, { value }) => this.setState({ healthMatter: value });
 
     onResultChange = (event) => this.setState({
-        // ...this.state,
         result: event.target.value
     });
 

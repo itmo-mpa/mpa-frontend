@@ -26,6 +26,8 @@ export class States extends React.Component {
 
         try {
             await this.props.getDraft(patientId);
+            await this.props.getNextStates(patientId);
+
         } catch (e) {
             const draftInitData = {
                 stateId: status.state.id,
@@ -38,7 +40,7 @@ export class States extends React.Component {
     }
 
     confirmState = (state) => {
-        this.props.clearDraft();
+        // this.props.clearDraft();
         this.props.updateState(state);
     };
 

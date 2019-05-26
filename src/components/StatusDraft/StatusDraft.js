@@ -43,8 +43,9 @@ export class StatusDraft extends React.Component {
     };
 
     onDraftUpdate = async (attribute) => {
-        const { patientId, state, draft } = this.props;
-        if(!state) return;
+        const { patientId, draft, status } = this.props;
+        const state = draft.state || status.state;
+        console.log('debug', this.props);
         if (draft && draft.attributes && attribute) {
             let updated = false;
             draft.attributes.map((attr) => {
