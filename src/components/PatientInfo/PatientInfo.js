@@ -1,9 +1,10 @@
-import './PatientInfo.css';
 import React from 'react';
-import { getHistory } from '../../Services/draftService';
-import AssociationForm from '../AssoсiationForm/AssociationForm';
+import {connect} from 'react-redux';
+import './PatientInfo.css';
+import AssociationForm from '../AssociationForm/AssociationForm';
+import * as historyThunks from '../../redux/thunks/history';
 
-export default class PatientInfo extends React.Component {
+export class PatientInfo extends React.Component {
     state = {
         history: []
     };
@@ -11,15 +12,16 @@ export default class PatientInfo extends React.Component {
     componentWillReceiveProps (nextProps) {
         const { patient } = nextProps;
 
-        patient && getHistory(patient.id).then(history => {
-            console.log('GET history', history);
-            this.setState({ history });
-        });
+        if (patient && this.props.patient && patient.id === this.props.patient.id) {
+            return;
+        }
+
+        this.props.getHistory(patient.id);
     }
 
     render () {
         const { name, birthDate } = this.props.patient;
-        const { history } = this.state;
+        const { history } = this.props;
 
         const dateObj = new Date(birthDate);
         const year = dateObj.getFullYear();
@@ -51,3 +53,13 @@ export default class PatientInfo extends React.Component {
         );
     }
 }
+
+export default connect(
+    store => ({
+        patient: store.patient,
+        history: store.history
+    }),
+    {
+        getHistory: historyThunks.get
+    }
+)(PatientInfo);

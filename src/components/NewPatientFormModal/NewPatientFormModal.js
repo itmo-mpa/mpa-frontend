@@ -1,15 +1,16 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import { Modal, Button, Form, Select, Input } from 'semantic-ui-react';
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
-import { createPatient } from '../../Services/patientService';
+import * as patientThunks from '../../redux/thunks/patient';
 
 const genderOptions = [
     { key: 'm', text: 'Male', value: 'male' },
     { key: 'f', text: 'Female', value: 'female' }
 ];
 
-export default class NewPatientForm extends React.Component {
+export class NewPatientForm extends React.Component {
     savePatient (event) {
         event.preventDefault();
         const patientData = {
@@ -18,7 +19,7 @@ export default class NewPatientForm extends React.Component {
             diseaseId: 1,
             doctorId: 1
         };
-        createPatient(patientData);
+        this.props.create(patientData);
     }
 
     render () {
@@ -43,3 +44,10 @@ export default class NewPatientForm extends React.Component {
         );
     }
 }
+
+export default connect(
+    null,
+    {
+        create: patientThunks.create
+    }
+)(NewPatientForm);

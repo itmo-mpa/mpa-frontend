@@ -1,20 +1,19 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import { Sidebar, Menu, Ref } from 'semantic-ui-react';
 import NewPatientForm from '../NewPatientFormModal/NewPatientFormModal';
-import { getPatients } from '../../Services/patientService';
+import * as patientThunks from '../../redux/thunks/patient';
+import * as patientsThunks from '../../redux/thunks/patients';
 
-export default class SidebarList extends React.Component {
+export class SidebarList extends React.Component {
     state = {
         opened: false,
         animating: false,
-        patients: []
     };
 
     sidebarRef = null;
     componentDidMount () {
-        getPatients().then(patients => {
-            this.setState({ patients });
-        });
+        this.props.getPatients();
     }
 
     componentWillReceiveProps (nextProps) {
@@ -48,14 +47,14 @@ export default class SidebarList extends React.Component {
         document.removeEventListener('click', this.closeSidebar);
     };
 
-    patientOnClick (e, patient) {
-        const { patientOnChange } = this.props;
+    async patientOnClick (e, patient) {
+        await this.props.getPatient(patient.id)
 
-        patientOnChange(patient);
         document.body.click();
     }
+
     render () {
-        const { patients } = this.state;
+        const { patients } = this.props;
 
         return (
             <Ref innerRef={node => {
@@ -74,7 +73,7 @@ export default class SidebarList extends React.Component {
                     {patients.map((patient, index) => {
                         return (
                             <Menu.Item as='div'
-                                key={patient.name}
+                                key={patient.id}
                                 onClick={(e) => this.patientOnClick(e, patient)}
                                 style={{ cursor: 'pointer' }}>
                                 {patient.name} ({patient.birthDate})
@@ -87,3 +86,13 @@ export default class SidebarList extends React.Component {
         );
     }
 }
+
+export default connect(
+    store => ({
+        patients: store.patients || []
+    }),
+    {
+        getPatient: patientThunks.get,
+        getPatients: patientsThunks.get
+    }
+)(SidebarList);

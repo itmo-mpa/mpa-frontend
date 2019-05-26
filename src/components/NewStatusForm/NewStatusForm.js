@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Button, Input } from 'semantic-ui-react';
 import './NewStatusForm.css';
-import AssociationForm from '../AssoсiationForm/AssociationForm';
+import AssociationForm from '../AssociationForm/AssociationForm';
 
 export default class NewStatusForm extends React.Component {
     state = {
@@ -13,9 +13,12 @@ export default class NewStatusForm extends React.Component {
         event.preventDefault();
         const { onDraftUpdate } = this.props;
         const { healthMatter, result } = this.state;
-        onDraftUpdate({
-            [healthMatter]: result
-        });
+
+        const name = this.props.diseaseData.find(data => data.id === healthMatter).name;
+
+        onDraftUpdate(
+            {id: healthMatter, value: result, name}
+        );
     };
 
     onHMChange = (e, { value }) => this.setState({ healthMatter: value });
@@ -26,9 +29,7 @@ export default class NewStatusForm extends React.Component {
     });
 
     getAssociationData = () => {
-        const hm = this.props.diseaseData.find(data => data.name === this.state.healthMatter);
-
-        return `eq($status.${hm.id}, ${this.state.result})`;
+        return `eq($status.${this.state.healthMatter}, ${this.state.result})`;
     }
 
     render () {

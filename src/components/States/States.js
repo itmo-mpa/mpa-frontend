@@ -1,42 +1,40 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import './States.css';
-import { createDraft, getDraft, getNextStates } from '../../Services/draftService';
+import * as draftThunks from '../../redux/thunks/draft';
 import StatusDraft from '../StatusDraft/StatusDraft';
 import { NextState } from '../NextState/NextState';
-import AssociationForm from '../AssoсiationForm/AssociationForm';
+import AssociationForm from '../AssociationForm/AssociationForm';
 import Associations from '../Associations/Associations';
 
-export default class States extends React.Component {
+export class States extends React.Component {
     state = {
-        nextStates: [],
         state: null
     };
 
-    componentWillReceiveProps (nextProps) {
-        let { patientId, status } = nextProps;
-        if (!patientId) return;
-        getDraft(patientId).then(
-            (draft) => {
-                this.setState(draft);
-                console.log('GET draft', draft);
-            }, (error) => { //eslint-disable-line
-                const draftInitData = {
-                    stateId: status.state.id,
-                    medicines: [],
-                    attributes: {}
-                };
-                createDraft(patientId, draftInitData).then((res) => {
-                    console.log('PUT draft', res);
-                });
-            });
+    async componentWillReceiveProps (nextProps) {
+        const { patientId, status } = nextProps;
+
+        if (!patientId || patientId === this.props.patientId) {
+            return;
+        }
+
+        if (status && this.props.status && status.state.id === this.props.status.state.id) {
+            return;
+        }
+
+        try {
+            await this.props.getDraft(patientId)
+        } catch (e) {
+            const draftInitData = {
+                stateId: status.state.id,
+                medicines: [],
+                attributes: {}
+            };
+            await this.props.createDraft(patientId, draftInitData);
+        }
     }
 
-    onNextStates = (nextStates) => {
-        nextStates && nextStates.length && this.setState({
-            ...this.state,
-            nextStates
-        });
-    };
     confirmState = (state) => {
         this.setState({
             ...this.state,
@@ -49,8 +47,9 @@ export default class States extends React.Component {
     }
 
     render () {
-        const { patientId, status } = this.props;
-        const { nextStates, state } = this.state;
+        const { patientId, status, nextStates } = this.props;
+        const { state } = this.state;
+
         return (
             <React.Fragment>
                 {status && (<section className="States">
@@ -64,13 +63,13 @@ export default class States extends React.Component {
                         </div>
                     </div>
                     <div className="States-DraftWrap States-Wrap">
-                        <StatusDraft patientId={patientId} state={state || status.state} status={status} onNextStates={this.onNextStates}/>
+                        <StatusDraft patientId={patientId} state={state || status.state} status={status}/>
                         <Associations />
                     </div>
                     {nextStates.length ? <div className="States-NextWrap States-Wrap">
                         <div className="States-Next">
                             {nextStates.map(nextState =>
-                                <NextState {...nextState} key={nextState.id} confirmState={this.confirmState}/>
+                                <NextState key={nextState.state.id} confirmState={this.confirmState} {...nextState} />
                             )}
                         </div>
                     </div> : null
@@ -80,3 +79,16 @@ export default class States extends React.Component {
         );
     }
 }
+
+export default connect(
+    store => ({
+        nextStates: store.nextStates,
+        draft: store.draft,
+        patientId: store.patient.id,
+        status: store.patient.status
+    }),
+    {
+        getDraft: draftThunks.get,
+        createDraft: draftThunks.create
+    }
+)(States);

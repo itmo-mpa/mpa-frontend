@@ -1,37 +1,30 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import { Button, Divider, Icon } from 'semantic-ui-react';
 import NewStatusForm from '../NewStatusForm/NewStatusForm';
 import './StatusDraft.css';
-import AssociationForm from '../AssoсiationForm/AssociationForm';
-import { commitDraft, createDraft, getDiseaseData, getDraft, getNextStates } from '../../Services/draftService';
+import AssociationForm from '../AssociationForm/AssociationForm';
+import * as draftThunks from '../../redux/thunks/draft';
+import * as nextStatesThunks from '../../redux/thunks/nextStates';
+import * as diseaseThunks from '../../redux/thunks/disease';
 
-export default class StatusDraft extends React.Component {
+export class StatusDraft extends React.Component {
     state = {
         symptomsAmount: 1
     };
 
-    componentDidMount () {
-        const { patientId, onNextStates } = this.props;
+    async componentDidMount () {
+        const { patientId } = this.props;
         if (patientId) {
-            getDraft(patientId).then(draftData => {
-                console.log('GET DRAFT', draftData);
-                this.setState({
-                    ...this.state,
-                    draftData
-                });
-            });
-            getDiseaseData(patientId).then(diseaseData => {
-                console.log('GET diseaseData', diseaseData);
+            await this.props.getDraft(patientId);
 
-                this.setState({
-                    ...this.state,
-                    diseaseData
-                });
-            });
-            getNextStates(patientId).then(nextStates => {
-                console.log('GET next state', nextStates);
-                onNextStates(nextStates);
-            });
+            console.log('DRAFT', this.props.draft);
+            
+            await this.props.getDisease(patientId);
+
+            console.log('GET diseaseData', this.props.disease);
+            
+            await this.props.getNextStates(patientId);
         }
     }
 
@@ -41,44 +34,36 @@ export default class StatusDraft extends React.Component {
         });
     };
 
-    onDraftSubmit = () => {
+    onDraftSubmit = async () => {
         const { patientId } = this.props;
-        this.onDraftUpdate();
-        commitDraft(patientId);
+        await this.onDraftUpdate();
+        await this.props.commitDraft(patientId);
         alert('saved!');
     };
 
-    onDraftUpdate = (attribute) => {
-        const { patientId, onNextStates, state } = this.props;
-        let { draftData } = this.state;
-        console.log('GET DRAFT', this.state);
+    onDraftUpdate = async (attribute) => {
+        const { patientId, state, draft } = this.props;
         if (attribute) {
-            draftData.attributes = {
-                ...draftData.attributes,
-                ...attribute
-            };
+            draft.attributes = [
+                ...draft.attributes,
+                attribute
+            ];
         }
-        this.setState({
-            ...this.state,
-            draftData
-        });
+
         const data = {
-            attributes: (draftData && draftData.attributes) || [],
-            medicines: (draftData && draftData.medicines) || [],
+            attributes: (draft  && draft.attributes) || [],
+            medicines: (draft && draft.medicines) || [],
             stateId: state.id
         };
-        createDraft(patientId, data).then(data => console.log('upd draft', data))
-            .then(getNextStates(patientId))
-            .then(nextStates => {
-                console.log('GET next state', nextStates);
-                onNextStates(nextStates);
-            });
+
+        await this.props.createDraft(patientId, data);
+        await this.props.getNextStates(patientId);
     };
 
     render () {
-        const { status, patientId, state } = this.props;
+        const { status, patientId, state, disease } = this.props;
         const attributes = status.attributes || [];
-        const { symptomsAmount, diseaseData } = this.state;
+        const { symptomsAmount } = this.state;
 
         return (
             <div className='States-Draft Draft'>
@@ -112,7 +97,7 @@ export default class StatusDraft extends React.Component {
                             patientId={patientId}
                             statusId={status.id}
                             onDraftUpdate={this.onDraftUpdate}
-                            diseaseData={diseaseData}
+                            diseaseData={disease}
                         />
                     </div>
                 )}
@@ -123,3 +108,18 @@ export default class StatusDraft extends React.Component {
         );
     }
 }
+
+export default connect(
+    store => ({
+        draft: store.draft,
+        disease: store.disease
+    }),
+    {
+        getDraft: draftThunks.get,
+        clearDraft: draftThunks.clear,
+        commitDraft: draftThunks.commit,
+        createDraft: draftThunks.create,
+        getNextStates: nextStatesThunks.get,
+        getDisease: diseaseThunks.get
+    }
+)(StatusDraft)

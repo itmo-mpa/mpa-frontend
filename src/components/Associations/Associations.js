@@ -1,21 +1,16 @@
 import React, { Component } from 'react';
-import { getAssociations } from '../../Services/associationService';
+import {connect} from 'react-redux';
+import * as associationsThunks from '../../redux/thunks/associations';
 
-export default class Associations extends Component {
-    state = {
-        associations: []
-    };
-
+export class Associations extends Component {
     async componentWillMount () {
-        const associations = await getAssociations();
+        await this.props.getAssociations();
 
-        console.log('GET Associations', associations);
-
-        this.setState({ associations });
+        console.log('GET Associations', this.props.associations);
     }
 
     render () {
-        const { associations } = this.state;
+        const { associations } = this.props;
 
         return (
             <div className='States-Draft'>
@@ -32,3 +27,12 @@ export default class Associations extends Component {
         );
     }
 }
+
+export default connect(
+    store => ({
+        associations: store.associations
+    }),
+    {
+        getAssociations: associationsThunks.get
+    }
+)(Associations);

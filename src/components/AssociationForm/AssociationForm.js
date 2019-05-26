@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Button, Form, Icon, Modal, TextArea } from 'semantic-ui-react';
+import {connect} from 'react-redux';
 import './AssociationForm.css';
-import { createAssociation } from '../../Services/associationService';
+import * as associationsThunks from '../../redux/thunks/associations';
 
-export default class AssociationForm extends Component {
+export class AssociationForm extends Component {
   state = {
       text: '',
       showModal: false
@@ -17,7 +18,7 @@ export default class AssociationForm extends Component {
       const predicate = this.props.getData();
       const text = this.state.text;
 
-      createAssociation({
+      this.props.create({
           predicate,
           text
       });
@@ -67,3 +68,10 @@ export default class AssociationForm extends Component {
       );
   }
 }
+
+export default connect(
+    null,
+    {
+        create: associationsThunks.create
+    }
+)(AssociationForm);

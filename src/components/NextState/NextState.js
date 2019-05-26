@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Label } from 'semantic-ui-react';
 import './NextState.css';
-import AssociationForm from '../AssoсiationForm/AssociationForm';
+import AssociationForm from '../AssociationForm/AssociationForm';
 
 export const NextState = (props) => (
     <div className="States-NextState NextState">
