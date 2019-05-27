@@ -21,7 +21,7 @@ export class PatientInfo extends React.Component {
 
     render () {
         const { name, birthDate } = this.props.patient;
-        const { history } = this.props;
+        const { history = [] } = this.props;
 
         const dateObj = new Date(birthDate);
         const year = dateObj.getFullYear();
@@ -47,7 +47,7 @@ export class PatientInfo extends React.Component {
                 </section>
                 <section className="PatientInfo-History">
                     <h3>History</h3>
-                    {history && history !== {} && history.map(event =>
+                    {history.map(event =>
                         <div key={event.id}>
                             <p>date:{event.submittedOn}</p>
                             <p>name:{event.state.name}</p>
