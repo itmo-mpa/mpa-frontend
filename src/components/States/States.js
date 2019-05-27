@@ -8,12 +8,9 @@ import { NextState } from '../NextState/NextState';
 import AssociationForm from '../AssociationForm/AssociationForm';
 import Associations from '../Associations/Associations';
 import * as diseaseThunks from '../../redux/thunks/disease';
+import * as nextStatesThunks from '../../redux/thunks/nextStates';
 
 export class States extends React.Component {
-    state = {
-        state: null
-    };
-
     componentDidMount () {
         this.props.getDiseases();
     }
@@ -31,7 +28,6 @@ export class States extends React.Component {
 
         try {
             await this.props.getDraft(patientId);
-            await this.props.getNextStates(patientId);
         } catch (e) {
             const draftInitData = {
                 stateId: status.state.id,
@@ -39,8 +35,9 @@ export class States extends React.Component {
                 attributes: []
             };
             await this.props.createDraft(patientId, draftInitData);
-            await this.props.getDisease(patientId);
         }
+        await this.props.getNextStates(patientId);
+        await this.props.getDisease(patientId);
     }
 
     confirmState = (state) => {
@@ -56,7 +53,7 @@ export class States extends React.Component {
     };
 
     render () {
-        const { patientId, status, nextStates, draft } = this.props;
+        const { status, nextStates } = this.props;
 
         return (
             <React.Fragment>
@@ -73,7 +70,7 @@ export class States extends React.Component {
                         </div>
                     </div>
                     <div className="States-DraftWrap States-Wrap">
-                        <StatusDraft patientId={patientId} state={draft.state} status={status}/>
+                        <StatusDraft/>
                         <Associations />
                     </div>
                     {nextStates.length ? <div className="States-NextWrap States-Wrap">
@@ -103,6 +100,8 @@ export default connect(
         clearDraft: draftThunks.clear,
         updateState: draftThunks.updateState,
         getDiseases: diseasesThunks.get,
-        getDisease: diseaseThunks.get
+        getDisease: diseaseThunks.get,
+        getNextStates: nextStatesThunks.get
+
     }
 )(States);

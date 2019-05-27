@@ -13,8 +13,6 @@ export const get = (id) => {
 
 export const create = (id, draft) => {
     return async (dispatch) => {
-        console.log('CREATE DRAFT DATA', draft);
-
         const result = await service.createDraft(id, draft);
 
         console.log('CREATE DRAFT', result);
