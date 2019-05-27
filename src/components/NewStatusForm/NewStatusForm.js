@@ -9,6 +9,10 @@ export default class NewStatusForm extends React.Component {
         result: ''
     };
 
+    componentWillMount () {
+
+    }
+
     handleSubmit = (event) => {
         event.preventDefault();
         const { onDraftUpdate } = this.props;

@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import './States.css';
 import * as draftThunks from '../../redux/thunks/draft';
+import * as diseasesThunks from '../../redux/thunks/diseases';
 import StatusDraft from '../StatusDraft/StatusDraft';
 import { NextState } from '../NextState/NextState';
 import AssociationForm from '../AssociationForm/AssociationForm';
@@ -11,6 +12,10 @@ export class States extends React.Component {
     state = {
         state: null
     };
+
+    componentDidMount () {
+        this.props.getDiseases();
+    }
 
     async componentWillReceiveProps (nextProps) {
         const { patientId, status } = nextProps;
@@ -88,6 +93,7 @@ export default connect(
         getDraft: draftThunks.get,
         createDraft: draftThunks.create,
         clearDraft: draftThunks.clear,
-        updateState: draftThunks.updateState
+        updateState: draftThunks.updateState,
+        getDiseases: diseasesThunks.get
     }
 )(States);

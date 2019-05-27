@@ -1,5 +1,5 @@
 .NextState{
-    height: 15rem;
+    min-height: 15rem;
     position: relative;
     border-radius: 4px;
 }

@@ -5,6 +5,8 @@ export const get = (patientId) => {
     return async (dispatch) => {
         const states = await service.getNextStates(patientId);
 
+        console.log('GOT NEXT STATES', states);
+
         dispatch(actionCreaters.put(states));
 
         return states;

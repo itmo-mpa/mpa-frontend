@@ -5,6 +5,8 @@ export const get = (id) => {
     return async dispatch => {
         const patient = await service.getPatientById(id);
 
+        console.log('GOT PATIENT', patient);
+
         dispatch(actionCreaters.put(patient));
     };
 };

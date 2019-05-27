@@ -1,16 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button, Divider, Icon } from 'semantic-ui-react';
+import { Button, Divider, Icon, Select } from 'semantic-ui-react';
 import NewStatusForm from '../NewStatusForm/NewStatusForm';
 import './StatusDraft.css';
 import AssociationForm from '../AssociationForm/AssociationForm';
 import * as draftThunks from '../../redux/thunks/draft';
 import * as nextStatesThunks from '../../redux/thunks/nextStates';
 import * as diseaseThunks from '../../redux/thunks/disease';
+import * as medicinesThunks from '../../redux/thunks/medicines';
 
 export class StatusDraft extends React.Component {
     state = {
-        symptomsAmount: 1
+        symptomsAmount: 1,
+        medicinesAmount: 1
     };
 
     async componentDidMount () {
@@ -28,10 +30,35 @@ export class StatusDraft extends React.Component {
         }
     }
 
-    onPlusClick = () => {
-        this.setState({
-            symptomsAmount: this.state.symptomsAmount + 1
-        });
+    async componentWillReceiveProps (nextProps) {
+        const { patientId } = nextProps;
+
+        if (patientId === this.props.patientId) {
+            return;
+        }
+
+        await this.props.getNextStates(patientId);
+
+        const diseaseId = this.props.diseases.find(disease => disease.name === this.props.patient.diseaseName).id;
+
+        await this.props.getMedicines(diseaseId);
+    }
+
+    onPlusClick = (name) => () => {
+        switch (name) {
+        case 'attribute':
+            this.setState({
+                symptomsAmount: this.state.symptomsAmount + 1
+            });
+            break;
+
+        case 'medicine':
+            this.setState({
+                medicinesAmount: this.state.medicinesAmount + 1
+            });
+            break;
+        default:
+        }
     };
 
     onDraftSubmit = async () => {
@@ -41,10 +68,10 @@ export class StatusDraft extends React.Component {
         alert('saved!');
     };
 
-    onDraftUpdate = async (attribute) => {
-        const { patientId, state, draft } = this.props;
+    onDraftUpdate = async (attribute, medicineId) => {
+        const { patientId, state, draft, medicines } = this.props;
 
-        console.log(draft);
+        console.log(medicineId);
 
         if (attribute) {
             draft.attributes = [
@@ -53,10 +80,17 @@ export class StatusDraft extends React.Component {
             ];
         }
 
+        if (medicineId && !draft.medicines.find(m => m.id === medicineId)) {
+            draft.medicine = [
+                ...draft.medicines,
+                medicines.find(m => m.id === medicineId)
+            ];
+        }
+
         const data = {
             attributes: (draft && draft.attributes) || [],
             medicines: (draft && draft.medicines) || [],
-            stateId: state.id
+            stateId: (state && state.id) || draft.stateId
         };
 
         await this.props.createDraft(patientId, data);
@@ -64,9 +98,12 @@ export class StatusDraft extends React.Component {
     };
 
     render () {
-        const { status, patientId, state, disease } = this.props;
+        const { status, patientId, state, disease, medicines } = this.props;
         const attributes = status.attributes || [];
-        const { symptomsAmount } = this.state;
+        const currentMedicines = status.medicines || [];
+        console.log(status);
+
+        const { symptomsAmount, medicinesAmount } = this.state;
 
         return (
             <div className='States-Draft Draft'>
@@ -75,14 +112,15 @@ export class StatusDraft extends React.Component {
                 <p>
                     last updated: {status.submittedOn}
                 </p>
-                {<p>
+                <p>
                     {JSON.stringify(state)}
                 </p>
-                }
-                {<p>
+                <p>
                     {JSON.stringify(attributes)}
                 </p>
-                }
+                <p>
+                    {JSON.stringify(currentMedicines)}
+                </p>
                 <Divider fitted/>
                 {new Array(symptomsAmount).fill(true).map((el, index) =>
                     <div className='Draft-StatusFormContainer' key={index}>
@@ -92,7 +130,7 @@ export class StatusDraft extends React.Component {
                             color='green'
                             size='large'
                             className='Draft-PlusButton'
-                            onClick={this.onPlusClick}
+                            onClick={this.onPlusClick('attribute')}
                         />
                         }
                         <NewStatusForm
@@ -105,6 +143,28 @@ export class StatusDraft extends React.Component {
                     </div>
                 )}
                 <Divider fitted/>
+                {medicines.length && new Array(medicinesAmount).fill(true).map((el, index) =>
+                    <div className='Draft-StatusFormContainer' key={index}>
+                        {index === medicinesAmount - 1 &&
+                        <Icon
+                            name='plus circle'
+                            color='green'
+                            size='large'
+                            className='Draft-PlusButton'
+                            onClick={this.onPlusClick('medicine')}
+                        />
+                        }
+                        <Select
+                            placeholder='Лекарство'
+                            options={medicines.map(medicine => ({
+                                value: medicine.id,
+                                key: medicine.id,
+                                text: medicine.name
+                            }))}
+                            onChange={(e, option) => this.onDraftUpdate(undefined, option.value)}
+                        />
+                    </div>
+                )}
                 <br/>
                 <Button type="submit" fluid positive onClick={this.onDraftSubmit}>Save draft</Button>
             </div>
@@ -115,7 +175,10 @@ export class StatusDraft extends React.Component {
 export default connect(
     store => ({
         draft: store.draft,
-        disease: store.disease
+        disease: store.disease,
+        diseases: store.diseases,
+        patient: store.patient,
+        medicines: store.medicines
     }),
     {
         getDraft: draftThunks.get,
@@ -123,6 +186,7 @@ export default connect(
         commitDraft: draftThunks.commit,
         createDraft: draftThunks.create,
         getNextStates: nextStatesThunks.get,
-        getDisease: diseaseThunks.get
+        getDisease: diseaseThunks.get,
+        getMedicines: medicinesThunks.get
     }
 )(StatusDraft);

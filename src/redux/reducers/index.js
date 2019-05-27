@@ -5,7 +5,9 @@ import patient from './patient';
 import patients from './patients';
 import nextStates from './nextStates';
 import disease from './disease';
+import diseases from './diseases';
 import history from './history';
+import medicines from './medicines';
 
 export default combineReducers({
     associations,
@@ -14,5 +16,7 @@ export default combineReducers({
     patients,
     nextStates,
     disease,
-    history
+    diseases,
+    history,
+    medicines
 });
