@@ -42,7 +42,10 @@ export default class NewStatusForm extends React.Component {
     });
 
     getAssociationData = () => {
-        return `eq($status.${this.state.healthMatter}, ${this.state.result})`;
+        return {
+            predicate: `eq(\${status.${this.state.healthMatter}}, ${this.state.result})`,
+            type: 'symptom'
+        };
     };
 
     render () {

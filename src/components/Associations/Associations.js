@@ -3,9 +3,12 @@ import { connect } from 'react-redux';
 import * as associationsThunks from '../../redux/thunks/associations';
 
 export class Associations extends Component {
-    async componentWillMount () {
-        await this.props.getAssociations(this.props.patientId);
+    async componentWillReceiveProps ({ patientId }) {
+        if (patientId === this.props.patientId) {
+            return;
+        }
 
+        await this.props.getAssociations(patientId);
         console.log('GET Associations', this.props.associations);
     }
 

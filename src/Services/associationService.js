@@ -5,5 +5,5 @@ export function getAssociations (patientId) {
 }
 
 export function createAssociation (data) {
-    return post(`/doctors/1/associations`, data);
+    return post(`/associations/1`, data);
 }

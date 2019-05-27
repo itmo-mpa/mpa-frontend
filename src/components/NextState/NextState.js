@@ -3,26 +3,26 @@ import { Button, Label } from 'semantic-ui-react';
 import './NextState.css';
 import AssociationForm from '../AssociationForm/AssociationForm';
 
-function getLabel(recommended) {
-    if (recommended === null){
+function getLabel (recommended) {
+    if (recommended === null) {
         return {
-            color:'orange',
-            text:'недостаточно информации',
+            color: 'orange',
+            text: 'недостаточно информации'
         };
-    } if (!recommended){
+    } if (!recommended) {
         return {
-            color:'red',
-            text:'не рекомендуется',
+            color: 'red',
+            text: 'не рекомендуется'
         };
     }
     return {
-        color:'green',
-        text:'рекомендуется',
+        color: 'green',
+        text: 'рекомендуется'
     };
 }
 export const NextState = (props) => (
     <div className="States-NextState NextState">
-        <AssociationForm position='right' getData={() => `eq($StatusId, ${props.id})`} />
+        <AssociationForm position='right' getData={() => ({ predicate: `eq(\${statusId}, ${props.id})`, type: 'state' })} />
         <Label className="NextState-Label"
             color={getLabel(props.recommended).color} tag>
             {getLabel(props.recommended).text}
@@ -38,7 +38,7 @@ export const NextState = (props) => (
                     <p key={i}>code: {error.code}, reason: {error.reason}</p>
                 )}
             </div>
-          }
+            }
             <Button className="NextState-Button" basic color='teal'
                 onClick={() => props.confirmState(props.state)}>Confirm</Button>
         </div>

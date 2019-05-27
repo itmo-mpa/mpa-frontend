@@ -16,6 +16,14 @@ export function getDiseaseData (id) {
     return get(`/patients/${id}/status/attributes`);
 }
 
+export const getDiseases = () => {
+    return get('/diseases');
+};
+
+export const getMedicines = (diseaseId) => {
+    return get(`/diseases/${diseaseId}/medicine`);
+};
+
 export function getHistory (id) {
     return get(`/patients/${id}/statuses`);
 }

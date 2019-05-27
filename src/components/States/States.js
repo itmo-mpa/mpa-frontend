@@ -2,16 +2,21 @@ import React from 'react';
 import { connect } from 'react-redux';
 import './States.css';
 import * as draftThunks from '../../redux/thunks/draft';
+import * as diseasesThunks from '../../redux/thunks/diseases';
 import StatusDraft from '../StatusDraft/StatusDraft';
 import { NextState } from '../NextState/NextState';
 import AssociationForm from '../AssociationForm/AssociationForm';
 import Associations from '../Associations/Associations';
-import * as diseaseThunks from "../../redux/thunks/disease";
+import * as diseaseThunks from '../../redux/thunks/disease';
 
 export class States extends React.Component {
     state = {
         state: null
     };
+
+    componentDidMount () {
+        this.props.getDiseases();
+    }
 
     async componentWillReceiveProps (nextProps) {
         const { patientId, status } = nextProps;
@@ -27,7 +32,6 @@ export class States extends React.Component {
         try {
             await this.props.getDraft(patientId);
             await this.props.getNextStates(patientId);
-
         } catch (e) {
             const draftInitData = {
                 stateId: status.state.id,
@@ -45,7 +49,10 @@ export class States extends React.Component {
     };
 
     associationData = () => {
-        return `eq($StatusId, ${this.props.status.id})`;
+        return {
+            predicate: `eq(\${statusId}, ${this.props.status.id})`,
+            type: 'state'
+        };
     };
 
     render () {
@@ -95,6 +102,7 @@ export default connect(
         createDraft: draftThunks.create,
         clearDraft: draftThunks.clear,
         updateState: draftThunks.updateState,
+        getDiseases: diseasesThunks.get,
         getDisease: diseaseThunks.get
     }
 )(States);

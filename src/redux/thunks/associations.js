@@ -13,6 +13,9 @@ export const create = data => {
     return async dispatch => {
         await service.createAssociation(data);
 
+        data.type = data.associationType;
+        delete data.associationType;
+
         dispatch(actionCreaters.add(data));
     };
 };

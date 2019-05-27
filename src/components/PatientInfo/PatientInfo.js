@@ -39,7 +39,7 @@ export class PatientInfo extends React.Component {
                     <h3>Info</h3>
                     <div>
                         <div style={{ position: 'relative' }}>
-                            <AssociationForm position='right' getData={() => `eq($patient.age, ${age})`} />
+                            <AssociationForm position='right' getData={() => ({ predicate: `eq(\${patient.age}, ${age})`, type: 'patient' })} />
                             <p>Birth date: {birthDate}</p>
                         </div>
                         {/* <p>Gender: {gender}</p> */}
@@ -47,7 +47,7 @@ export class PatientInfo extends React.Component {
                 </section>
                 <section className="PatientInfo-History">
                     <h3>History</h3>
-                    {history && history !== {} && history.map( event=>
+                    {history && history !== {} && history.map(event =>
                         <div key={event.id}>
                             <p>date:{event.submittedOn}</p>
                             <p>name:{event.state.name}</p>
