@@ -8,6 +8,7 @@ import * as draftThunks from '../../redux/thunks/draft';
 import * as nextStatesThunks from '../../redux/thunks/nextStates';
 import * as diseaseThunks from '../../redux/thunks/disease';
 import * as medicinesThunks from '../../redux/thunks/medicines';
+import store from '../../redux';
 
 export class StatusDraft extends React.Component {
     state = {
@@ -44,6 +45,13 @@ export class StatusDraft extends React.Component {
         await this.props.getMedicines(diseaseId);
     }
 
+    getAssociationData = () => {
+        return {
+            predicate: `eq(\${draftId}, ${this.props.draft.id})`,
+            type: 'draft'
+        };
+    }
+
     onPlusClick = (name) => () => {
         switch (name) {
         case 'attribute':
@@ -69,19 +77,23 @@ export class StatusDraft extends React.Component {
     };
 
     onDraftUpdate = async (attribute, medicineId) => {
-        const { patientId, state, draft, medicines } = this.props;
-
-        console.log(medicineId);
-
-        if (attribute) {
-            draft.attributes = [
-                ...draft.attributes,
-                attribute
-            ];
+        const { patientId, draft, status, medicines } = this.props;
+        const state = draft.state || status.state;
+        console.log('debug', this.props);
+        if (draft && draft.attributes && attribute) {
+            let updated = false;
+            draft.attributes.map((attr) => {
+                if (attr.id === attribute.id) {
+                    updated = true;
+                    attr.value = attribute.value;
+                }
+                return attr;
+            });
+            if (!updated) draft.attributes.push(attribute);
         }
 
         if (medicineId && !draft.medicines.find(m => m.id === medicineId)) {
-            draft.medicine = [
+            draft.medicines = [
                 ...draft.medicines,
                 medicines.find(m => m.id === medicineId)
             ];
@@ -98,31 +110,48 @@ export class StatusDraft extends React.Component {
     };
 
     render () {
-        const { status, patientId, state, disease, medicines } = this.props;
-        const attributes = status.attributes || [];
-        const currentMedicines = status.medicines || [];
-        console.log(status);
+        const { status, patientId, draft, disease, medicines } = this.props;
+        const currentState = draft.state || status.state;
+        let attributes = draft.attributes || [];
+        let currentMedicines = draft.medicines || [];
 
         const { symptomsAmount, medicinesAmount } = this.state;
+        let diseaseData = disease.filter(diseaseItem => {
+            return !attributes.some(attribute => attribute.id === diseaseItem.id);
+        });
+        console.log('STORE', store.getState());
+        console.log('state', this.props);
 
         return (
             <div className='States-Draft Draft'>
-                <AssociationForm />
-                <h2 className='States-Heading'>State Draft</h2>
+                <AssociationForm getData={this.getAssociationData} />
+                <h2 className='States-Heading'>Черновик состояния</h2>
                 <p>
                     last updated: {status.submittedOn}
                 </p>
-                <p>
-                    {JSON.stringify(state)}
-                </p>
-                <p>
-                    {JSON.stringify(attributes)}
-                </p>
-                <p>
-                    {JSON.stringify(currentMedicines)}
-                </p>
+                { currentState && <div>
+                    <p>Текущее состояние</p>
+                    <p>state name: {currentState.name}</p>
+                    <p>
+                        description:{currentState.description}
+                    </p>
+                    <p>
+                        medicines: {JSON.stringify(currentMedicines)}
+                    </p>
+                </div>
+                }
                 <Divider fitted/>
-                {new Array(symptomsAmount).fill(true).map((el, index) =>
+                {attributes && attributes.map(attribute => (
+                    <NewStatusForm
+                        key={attribute.id}
+                        patientId={patientId}
+                        statusId={status.id}
+                        onDraftUpdate={this.onDraftUpdate}
+                        diseaseData={[attribute]}
+                        attribute={attribute}
+                    />
+                ))}
+                {diseaseData && new Array(symptomsAmount).fill(true).map((el, index) =>
                     <div className='Draft-StatusFormContainer' key={index}>
                         {index === symptomsAmount - 1 &&
                         <Icon
@@ -138,12 +167,12 @@ export class StatusDraft extends React.Component {
                             patientId={patientId}
                             statusId={status.id}
                             onDraftUpdate={this.onDraftUpdate}
-                            diseaseData={disease}
+                            diseaseData={diseaseData}
                         />
                     </div>
                 )}
                 <Divider fitted/>
-                {medicines.length && new Array(medicinesAmount).fill(true).map((el, index) =>
+                {medicines.length > 0 && new Array(medicinesAmount).fill(true).map((el, index) =>
                     <div className='Draft-StatusFormContainer' key={index}>
                         {index === medicinesAmount - 1 &&
                         <Icon
@@ -178,7 +207,7 @@ export default connect(
         disease: store.disease,
         diseases: store.diseases,
         patient: store.patient,
-        medicines: store.medicines
+        medicines: [{ name: 'Analgin', id: 1 }] // store.medicines
     }),
     {
         getDraft: draftThunks.get,

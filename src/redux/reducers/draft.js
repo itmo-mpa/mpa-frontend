@@ -23,7 +23,6 @@ export default (state = {}, action) => {
     case DRAFT_CLEAR:
         return {};
     case DRAFT_UPDATE_STATE:
-        console.log(state, action.payload);
 
         return {
             ...state,

@@ -25,7 +25,7 @@ export const getMedicines = (diseaseId) => {
 };
 
 export function getHistory (id) {
-    return get(`/patients/${id}/status`);
+    return get(`/patients/${id}/statuses`);
 }
 
 export function getNextStates (id) {

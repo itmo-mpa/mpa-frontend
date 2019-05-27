@@ -8,19 +8,20 @@ export class AssociationForm extends Component {
   state = {
       text: '',
       showModal: false
-  }
+  };
 
   onSubmit = () => {
       if (typeof this.props.getData !== 'function') {
           console.warn('getData method is not provided');
       }
 
-      const predicate = this.props.getData();
+      const { predicate, type } = this.props.getData();
       const text = this.state.text;
 
       this.props.create({
           predicate,
-          text
+          text,
+          associationType: type
       });
 
       this.closeModal();
@@ -28,7 +29,7 @@ export class AssociationForm extends Component {
 
   closeModal = () => {
       this.setState({ showModal: false });
-  }
+  };
 
   render () {
       const { position, style = {} } = this.props;

@@ -9,8 +9,14 @@ export default class NewStatusForm extends React.Component {
         result: ''
     };
 
-    componentWillMount () {
-
+    componentDidMount () {
+        const { attribute } = this.props;
+        if (attribute) {
+            this.setState({
+                healthMatter: attribute.id,
+                result: attribute.value
+            });
+        }
     }
 
     handleSubmit = (event) => {
@@ -23,23 +29,28 @@ export default class NewStatusForm extends React.Component {
         onDraftUpdate(
             { id: healthMatter, value: result, name }
         );
+        this.setState({
+            healthMatter: '',
+            result: ''
+        });
     };
 
     onHMChange = (e, { value }) => this.setState({ healthMatter: value });
 
     onResultChange = (event) => this.setState({
-        // ...this.state,
         result: event.target.value
     });
 
     getAssociationData = () => {
-        return `eq($status.${this.state.healthMatter}, ${this.state.result})`;
-    }
+        return {
+            predicate: `eq(\${status.${this.state.healthMatter}}, ${this.state.result})`,
+            type: 'symptom'
+        };
+    };
 
     render () {
         const { className, diseaseData } = this.props;
-        const { healthMatter, result } = this.state;
-
+        let { healthMatter, result } = this.state;
         const options = diseaseData && diseaseData.map(attr => {
             return {
                 key: attr.id,
@@ -47,31 +58,35 @@ export default class NewStatusForm extends React.Component {
                 value: attr.id
             };
         });
+
         return (
             <section className={`NewStatus ${className || ''}`}>
-                {options && <Form className="NewStatus-Form" onSubmit={this.handleSubmit}>
-                    <Form.Group inline>
-                        <Form.Field className='NewStatus-Field'>
-                            <Form.Select
-                                label='Analysis or symptom'
-                                options={options}
-                                placeholder='data'
-                                value={healthMatter}
-                                onChange={this.onHMChange}
-                            />
-                        </Form.Field>
-                        <Form.Field className='NewStatus-Field'>
-                            <Form.Field
-                                control={Input}
-                                label='Result'
-                                value={result}
-                                onChange={this.onResultChange}
-                            />
-                        </Form.Field>
-                        <Button type='submit' basic color='green' >Submit</Button>
-                        {healthMatter && result && <AssociationForm style={{ position: 'relative' }} getData={this.getAssociationData} />}
-                    </Form.Group>
-                </Form>}
+
+                {options &&
+                    <Form className="NewStatus-Form" onSubmit={this.handleSubmit}>
+                        <Form.Group inline>
+                            <Form.Field className='NewStatus-Field'>
+                                <Form.Select
+                                    label='Analysis or symptom'
+                                    options={options}
+                                    placeholder='data'
+                                    value={healthMatter}
+                                    onChange={this.onHMChange}
+                                />
+                            </Form.Field>
+                            <Form.Field className='NewStatus-Field'>
+                                <Form.Field
+                                    control={Input}
+                                    label='Result'
+                                    value={result}
+                                    onChange={this.onResultChange}
+                                />
+                            </Form.Field>
+                            <Button type='submit' basic color='green'>Submit</Button>
+                            {healthMatter && result &&
+                            <AssociationForm style={{ position: 'relative' }} getData={this.getAssociationData}/>}
+                        </Form.Group>
+                    </Form>}
             </section>
         );
     }

@@ -7,6 +7,7 @@ import StatusDraft from '../StatusDraft/StatusDraft';
 import { NextState } from '../NextState/NextState';
 import AssociationForm from '../AssociationForm/AssociationForm';
 import Associations from '../Associations/Associations';
+import * as diseaseThunks from '../../redux/thunks/disease';
 
 export class States extends React.Component {
     state = {
@@ -30,6 +31,7 @@ export class States extends React.Component {
 
         try {
             await this.props.getDraft(patientId);
+            await this.props.getNextStates(patientId);
         } catch (e) {
             const draftInitData = {
                 stateId: status.state.id,
@@ -37,17 +39,21 @@ export class States extends React.Component {
                 attributes: []
             };
             await this.props.createDraft(patientId, draftInitData);
+            await this.props.getDisease(patientId);
         }
     }
 
     confirmState = (state) => {
-        this.props.clearDraft();
+        // this.props.clearDraft();
         this.props.updateState(state);
     };
 
     associationData = () => {
-        return `eq($StatusId, ${this.props.status.id})`;
-    }
+        return {
+            predicate: `eq(\${statusId}, ${this.props.status.id})`,
+            type: 'state'
+        };
+    };
 
     render () {
         const { patientId, status, nextStates, draft } = this.props;
@@ -58,10 +64,12 @@ export class States extends React.Component {
                     <div className="States-PrevWrap States-Wrap">
                         <div className="States-Prev">
                             <AssociationForm getData={this.associationData} />
-                            <h2 className='States-Heading'>Current State</h2>
+                            <h2 className='States-Heading'>Текущее состояние</h2>
                             <p>name: {status.state.name}</p>
                             <p>description: {status.state.description}</p>
                             <p>updated on: {status.submittedOn}</p>
+                            {status.attributes && status.attributes.map(attribute =>
+                                <p key={attribute.id} >{attribute.name} - {attribute.value}</p>)}
                         </div>
                     </div>
                     <div className="States-DraftWrap States-Wrap">
@@ -94,6 +102,7 @@ export default connect(
         createDraft: draftThunks.create,
         clearDraft: draftThunks.clear,
         updateState: draftThunks.updateState,
-        getDiseases: diseasesThunks.get
+        getDiseases: diseasesThunks.get,
+        getDisease: diseaseThunks.get
     }
 )(States);
