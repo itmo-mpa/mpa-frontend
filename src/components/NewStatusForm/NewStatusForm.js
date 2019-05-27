@@ -16,6 +16,11 @@ export default class NewStatusForm extends React.Component {
                 healthMatter: attribute.id,
                 result: attribute.value
             });
+        }else {
+            this.setState({
+                healthMatter: '',
+                result: ''
+            });
         }
     }
 
@@ -29,10 +34,6 @@ export default class NewStatusForm extends React.Component {
         onDraftUpdate(
             { id: healthMatter, value: result, name }
         );
-        this.setState({
-            healthMatter: '',
-            result: ''
-        });
     };
 
     onHMChange = (e, { value }) => this.setState({ healthMatter: value });
@@ -49,7 +50,7 @@ export default class NewStatusForm extends React.Component {
     };
 
     render () {
-        const { className, diseaseData } = this.props;
+        const { className, diseaseData, disabled } = this.props;
         let { healthMatter, result } = this.state;
         const options = diseaseData && diseaseData.map(attr => {
             return {
@@ -72,6 +73,7 @@ export default class NewStatusForm extends React.Component {
                                     placeholder='data'
                                     value={healthMatter}
                                     onChange={this.onHMChange}
+                                    // disabled={disabled}
                                 />
                             </Form.Field>
                             <Form.Field className='NewStatus-Field'>

@@ -20,22 +20,9 @@ export class StatusDraft extends React.Component {
         const { patient } = this.props.patient;
         const patientId = patient && patient.id;
         if (patientId) {
-            await this.updatePatientDraftData(patientId);
+            await this.props.updatePatientStatusData(patientId);
         }
     }
-
-    async updatePatientDraftData (patientId) {
-        await this.props.getDraft(patientId);
-
-        console.log('DRAFT', this.props.draft);
-
-        await this.props.getDisease(patientId);
-
-        console.log('GET diseaseData', this.props.disease);
-
-        await this.props.getNextStates(patientId);
-    }
-
     async componentWillReceiveProps (nextProps) {
         const { patient } = this.props;
         const patientId = patient && patient.id;
@@ -78,9 +65,9 @@ export class StatusDraft extends React.Component {
     onDraftSubmit = async () => {
         const { id } = this.props.patient;
         await this.onDraftUpdate();
-        await this.props.commitDraft(id);
         alert('saved!');
-        await this.updatePatientDraftData(id);
+        await this.props.commitDraft(id);
+        await this.props.updatePatientStatusData(id);
     };
 
     onDraftUpdate = async (attribute, medicineId) => {
@@ -156,6 +143,7 @@ export class StatusDraft extends React.Component {
                         onDraftUpdate={this.onDraftUpdate}
                         diseaseData={[attribute]}
                         attribute={attribute}
+                        // disabled
                     />
                 ))}
                 {diseaseData && new Array(symptomsAmount).fill(true).map((el, index) =>
