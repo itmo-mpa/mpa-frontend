@@ -39,7 +39,7 @@ export class PatientInfo extends React.Component {
                     <h3>Info</h3>
                     <div>
                         <div style={{ position: 'relative' }}>
-                            <AssociationForm position='right' getData={() => ({ predicate: `eq(\${patient.age}, ${age})`, type: 'patient' })} />
+                            <AssociationForm position='right' getData={() => ({ predicate: `eq({patient.age}, ${age})`, type: 'patient' })} />
                             <p>Birth date: {birthDate}</p>
                         </div>
                         {/* <p>Gender: {gender}</p> */}

@@ -9,13 +9,10 @@ import AssociationForm from '../AssociationForm/AssociationForm';
 import Associations from '../Associations/Associations';
 import * as diseaseThunks from '../../redux/thunks/disease';
 import * as nextStatesThunks from '../../redux/thunks/nextStates';
+import * as medicinesThunks from '../../redux/thunks/medicines';
 import * as patientThunks from '../../redux/thunks/patient';
 
 export class States extends React.Component {
-    constructor(props){
-        super(props);
-        this.updatePatientStatusData = this.updatePatientStatusData.bind(this);
-    }
     componentDidMount () {
         this.props.getDiseases();
     }
@@ -32,7 +29,8 @@ export class States extends React.Component {
         }
         await this.updatePatientStatusData(patientId);
     }
-    async updatePatientStatusData (patientId)  {
+
+    updatePatientStatusData = async (patientId) => {
         await this.props.getPatient(patientId);
         try {
             await this.props.getDraft(patientId);
@@ -52,6 +50,10 @@ export class States extends React.Component {
         console.log('GET diseaseData', this.props.disease);
 
         await this.props.getNextStates(patientId);
+
+        const diseaseId = this.props.diseases.find(disease => disease.name === this.props.diseaseName).id;
+
+        await this.props.getMedicines(diseaseId);
     }
     confirmState = (state) => {
         this.props.updateState(state);
@@ -59,7 +61,7 @@ export class States extends React.Component {
 
     associationData = () => {
         return {
-            predicate: `eq(\${statusId}, ${this.props.status.id})`,
+            predicate: `eq({status.state.id}, ${this.props.status.state.id})`,
             type: 'state'
         };
     };
@@ -104,7 +106,9 @@ export default connect(
         nextStates: store.nextStates,
         draft: store.draft,
         patientId: store.patient.id,
-        status: store.patient.status
+        diseaseName: store.patient.diseaseName,
+        status: store.patient.status,
+        diseases: store.diseases
     }),
     {
         getDraft: draftThunks.get,
@@ -114,8 +118,7 @@ export default connect(
         getDiseases: diseasesThunks.get,
         getDisease: diseaseThunks.get,
         getNextStates: nextStatesThunks.get,
-        getPatient: patientThunks.get
-
-
+        getPatient: patientThunks.get,
+        getMedicines: medicinesThunks.get
     }
 )(States);

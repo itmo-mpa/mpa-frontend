@@ -22,7 +22,7 @@ function getLabel (recommended) {
 }
 export const NextState = (props) => (
     <div className="States-NextState NextState">
-        <AssociationForm position='right' getData={() => ({ predicate: `eq(\${statusId}, ${props.id})`, type: 'state' })} />
+        <AssociationForm position='right' getData={() => ({ predicate: `eq({status.state.id}, ${props.id})`, type: 'state' })} />
         <Label className="NextState-Label"
             color={getLabel(props.recommended).color} tag>
             {getLabel(props.recommended).text}

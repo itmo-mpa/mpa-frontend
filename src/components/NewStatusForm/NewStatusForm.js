@@ -16,7 +16,7 @@ export default class NewStatusForm extends React.Component {
                 healthMatter: attribute.id,
                 result: attribute.value
             });
-        }else {
+        } else {
             this.setState({
                 healthMatter: '',
                 result: ''
@@ -44,13 +44,13 @@ export default class NewStatusForm extends React.Component {
 
     getAssociationData = () => {
         return {
-            predicate: `eq(\${status.${this.state.healthMatter}}, ${this.state.result})`,
+            predicate: `eq({status.${this.state.healthMatter}}, ${this.state.result})`,
             type: 'symptom'
         };
     };
 
     render () {
-        const { className, diseaseData, disabled } = this.props;
+        const { className, diseaseData } = this.props;
         let { healthMatter, result } = this.state;
         const options = diseaseData && diseaseData.map(attr => {
             return {

@@ -7,13 +7,13 @@ import AssociationForm from '../AssociationForm/AssociationForm';
 import * as draftThunks from '../../redux/thunks/draft';
 import * as nextStatesThunks from '../../redux/thunks/nextStates';
 import * as diseaseThunks from '../../redux/thunks/disease';
-import * as medicinesThunks from '../../redux/thunks/medicines';
 import store from '../../redux';
 
 export class StatusDraft extends React.Component {
     state = {
         symptomsAmount: 1,
-        medicinesAmount: 1
+        medicinesAmount: 1,
+        disableSubmit: false
     };
 
     async componentDidMount () {
@@ -23,25 +23,11 @@ export class StatusDraft extends React.Component {
             await this.props.updatePatientStatusData(patientId);
         }
     }
-    async componentWillReceiveProps (nextProps) {
-        const { patient } = this.props;
-        const patientId = patient && patient.id;
-
-        if (patientId === this.props.patient.id) {
-            return;
-        }
-
-        await this.props.getNextStates(patientId);
-
-        const diseaseId = this.props.diseases.find(disease => disease.name === patient.diseaseName).id;
-
-        await this.props.getMedicines(diseaseId);
-    }
 
     getAssociationData = () => {
         return {
-            predicate: `eq(\${draftId}, ${this.props.draft.id})`,
-            type: 'draft'
+            predicate: `eq({status.state.id}, ${this.props.draft.state.id})`,
+            type: 'state'
         };
     };
 
@@ -63,11 +49,15 @@ export class StatusDraft extends React.Component {
     };
 
     onDraftSubmit = async () => {
+        this.setState({ disableSubmit: true });
+
         const { id } = this.props.patient;
         await this.onDraftUpdate();
         alert('saved!');
         await this.props.commitDraft(id);
         await this.props.updatePatientStatusData(id);
+
+        this.setState({ disableSubmit: false });
     };
 
     onDraftUpdate = async (attribute, medicineId) => {
@@ -185,12 +175,19 @@ export class StatusDraft extends React.Component {
                                 key: medicine.id,
                                 text: medicine.name
                             }))}
+                            value={currentMedicines[index] ? currentMedicines[index].id : undefined}
                             onChange={(e, option) => this.onDraftUpdate(undefined, option.value)}
                         />
+                        {currentMedicines[index] && <AssociationForm
+                            style={{ position: 'relative' }}
+                            getData={() => ({ predicate: `eq({medicine.id}, ${currentMedicines[index].id})`, type: 'medicine' })}
+                        />}
                     </div>
                 )}
                 <br/>
-                <Button type="submit" fluid positive onClick={this.onDraftSubmit}>Сохранить черновик</Button>
+                <Button type="submit" fluid positive onClick={this.onDraftSubmit} disabled={this.state.disableSubmit}>
+                    Сохранить черновик
+                </Button>
             </div>
         );
     }
@@ -200,9 +197,8 @@ export default connect(
     store => ({
         draft: store.draft,
         disease: store.disease,
-        diseases: store.diseases,
         patient: store.patient,
-        medicines: [{ name: 'Analgin', id: 1 }] // store.medicines
+        medicines: store.medicines
     }),
     {
         getDraft: draftThunks.get,
@@ -210,7 +206,6 @@ export default connect(
         commitDraft: draftThunks.commit,
         createDraft: draftThunks.create,
         getNextStates: nextStatesThunks.get,
-        getDisease: diseaseThunks.get,
-        getMedicines: medicinesThunks.get
+        getDisease: diseaseThunks.get
     }
 )(StatusDraft);
