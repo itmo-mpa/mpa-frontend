@@ -24,7 +24,18 @@ export class StatusDraft extends React.Component {
         }
     }
 
-    getAssociationData = () => {
+    componentWillReceiveProps ({patient, draft}) {
+      if (patient && patient.id && patient.id === this.props.patient.id) {
+        return;
+      }
+
+      this.setState({
+        symptomsAmount: 1,
+        medicinesAmount: draft.medicines && draft.medicines.length > 0 ? draft.medicines.length : 1
+      })
+    }
+
+  getAssociationData = () => {
         return {
             predicate: `eq({status.state.id}, ${this.props.draft.state.id})`,
             type: 'state'
@@ -61,7 +72,7 @@ export class StatusDraft extends React.Component {
     };
 
     onDraftUpdate = async (attribute, medicineId) => {
-        const { patient, draft, medicines } = this.props;
+        const { patient, draft } = this.props;
         const status = patient.status;
         const state = draft.state || status.state;
         if (draft && draft.attributes && attribute) {
@@ -76,10 +87,10 @@ export class StatusDraft extends React.Component {
             if (!updated) draft.attributes.push(attribute);
         }
 
-        if (medicineId && !draft.medicines.find(m => m.id === medicineId)) {
+        if (medicineId) {
             draft.medicines = [
                 ...draft.medicines,
-                medicines.find(m => m.id === medicineId)
+                medicineId
             ];
         }
 
@@ -119,9 +130,12 @@ export class StatusDraft extends React.Component {
                     <p>
                         description:{currentState.description}
                     </p>
-                    <p>
-                        medicines: {JSON.stringify(currentMedicines)}
-                    </p>
+                    {currentMedicines.length && <h3>Лекарства</h3>}
+                    {currentMedicines && currentMedicines.map(medicineId =>
+                      <p key={medicineId}>
+                        {medicines.find(medicine => medicine.id === medicineId).name}
+                      </p>
+                    )}
                 </div>
                 }
                 <Divider fitted/>
@@ -175,12 +189,12 @@ export class StatusDraft extends React.Component {
                                 key: medicine.id,
                                 text: medicine.name
                             }))}
-                            value={currentMedicines[index] ? currentMedicines[index].id : undefined}
+                            value={currentMedicines[index] ? currentMedicines[index] : undefined}
                             onChange={(e, option) => this.onDraftUpdate(undefined, option.value)}
                         />
                         {currentMedicines[index] && <AssociationForm
                             style={{ position: 'relative' }}
-                            getData={() => ({ predicate: `eq({medicine.id}, ${currentMedicines[index].id})`, type: 'medicine' })}
+                            getData={() => ({ predicate: `eq({medicine.id}, ${currentMedicines[index]})`, type: 'medicine' })}
                         />}
                     </div>
                 )}

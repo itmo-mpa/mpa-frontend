@@ -31,7 +31,8 @@ export class States extends React.Component {
     }
 
     updatePatientStatusData = async (patientId) => {
-        await this.props.getPatient(patientId);
+       await this.props.getPatient(patientId);
+
         try {
             await this.props.getDraft(patientId);
         } catch (e) {
@@ -43,18 +44,18 @@ export class States extends React.Component {
             await this.props.createDraft(patientId, draftInitData);
         }
 
-        console.log('DRAFT', this.props.draft);
 
         await this.props.getDisease(patientId);
-
-        console.log('GET diseaseData', this.props.disease);
-
         await this.props.getNextStates(patientId);
 
         const diseaseId = this.props.diseases.find(disease => disease.name === this.props.diseaseName).id;
 
         await this.props.getMedicines(diseaseId);
-    }
+
+        console.log('DRAFT', this.props.draft);
+        console.log('GET diseaseData', this.props.disease);
+    };
+
     confirmState = (state) => {
         this.props.updateState(state);
     };
@@ -81,6 +82,10 @@ export class States extends React.Component {
                             <p>updated on: {status.submittedOn}</p>
                             {status.attributes && status.attributes.map(attribute =>
                                 <p key={attribute.id} >{attribute.name} - {attribute.value}</p>)}
+                            {status.medicines.length && <h3>Лекарства</h3>}
+                            {status.medicines && status.medicines.map(medicine =>
+                              <p key={medicine.id}>{medicine.name}</p>
+                            )}
                         </div>
                     </div>
                     <div className="States-DraftWrap States-Wrap">
