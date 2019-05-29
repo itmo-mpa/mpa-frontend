@@ -82,7 +82,7 @@ export class States extends React.Component {
                             <p>updated on: {status.submittedOn}</p>
                             {status.attributes && status.attributes.map(attribute =>
                                 <p key={attribute.id} >{attribute.name} - {attribute.value}</p>)}
-                            {status.medicines.length && <h3>Лекарства</h3>}
+                            {status.medicines.length !== 0 && <h3>Лекарства</h3>}
                             {status.medicines && status.medicines.map(medicine =>
                               <p key={medicine.id}>{medicine.name}</p>
                             )}

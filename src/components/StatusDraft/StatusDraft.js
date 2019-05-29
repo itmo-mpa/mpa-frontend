@@ -130,7 +130,7 @@ export class StatusDraft extends React.Component {
                     <p>
                         description:{currentState.description}
                     </p>
-                    {currentMedicines.length && <h3>Лекарства</h3>}
+                    {currentMedicines.length !== 0 && <h3>Лекарства</h3>}
                     {currentMedicines && currentMedicines.map(medicineId =>
                       <p key={medicineId}>
                         {medicines.find(medicine => medicine.id === medicineId).name}
