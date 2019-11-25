@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Form, Button, Input } from 'semantic-ui-react';
 import './NewStatusForm.css';
 import AssociationForm from '../AssociationForm/AssociationForm';
@@ -11,6 +11,7 @@ export default class NewStatusForm extends React.Component {
 
     componentDidMount () {
         const { attribute } = this.props;
+
         if (attribute) {
             this.setState({
                 healthMatter: attribute.id,
@@ -24,23 +25,52 @@ export default class NewStatusForm extends React.Component {
         }
     }
 
-    handleSubmit = (event) => {
-        event.preventDefault();
+    handleSubmit = async () => {
         const { onDraftUpdate } = this.props;
         const { healthMatter, result } = this.state;
 
+        if (!healthMatter || !result) {
+            return;
+        }
+
         const name = this.props.diseaseData.find(data => data.id === healthMatter).name;
 
-        onDraftUpdate(
+        await onDraftUpdate(
             { id: healthMatter, value: result, name }
         );
+
+        this.setState({
+            healthMatter: '',
+            result: ''
+        });
     };
 
-    onHMChange = (e, { value }) => this.setState({ healthMatter: value });
+    onHMChange = async (e, { value }) => {
+        await this.setState({ healthMatter: value });
 
-    onResultChange = (event) => this.setState({
-        result: event.target.value
-    });
+        this.handleSubmit();
+    };
+
+    onResultChange = (event, formData) => {
+        let value;
+
+        switch (formData.type) {
+        case 'checkbox':
+            value = `${formData.checked}`;
+            break;
+
+        case 'number':
+            value = +formData.value;
+            break;
+
+        default:
+            value = formData.value;
+        }
+
+        this.setState({
+            result: value
+        });
+    };
 
     getAssociationData = () => {
         return {
@@ -48,6 +78,62 @@ export default class NewStatusForm extends React.Component {
             type: 'symptom'
         };
     };
+
+    getResultFromType () {
+        const props = {
+            label: 'Result',
+            value: this.state.result,
+            onChange: this.onResultChange,
+            onBlur: this.handleSubmit
+        };
+
+        const attributeData = this.props.diseaseData.find(attr => attr.id === this.state.healthMatter);
+
+        switch (attributeData && attributeData.type) {
+        case 'bool':
+            props.label = 'Observed';
+            props.defaultChecked = props.value ? JSON.parse(props.value) : false;
+
+            delete props.value;
+
+            return (
+                <Fragment>
+                    <label>Result</label>
+                    <Form.Checkbox {...props} />
+                </Fragment>
+            );
+
+        case 'enum':
+            const options = attributeData.possibleValues.map(
+                ({ id, value }) => ({
+                    key: value,
+                    text: value,
+                    value: value
+                })
+            );
+
+            return (
+                <Form.Select options={options} {...props} />
+            );
+
+        case 'double':
+            return (
+                <Form.Field
+                    control={Input}
+                    type='number'
+                    {...props}
+                />
+            );
+
+        default:
+            return (
+                <Form.Field
+                    control={Input}
+                    {...props}
+                />
+            );
+        }
+    }
 
     render () {
         const { className, diseaseData } = this.props;
@@ -64,8 +150,8 @@ export default class NewStatusForm extends React.Component {
             <section className={`NewStatus ${className || ''}`}>
 
                 {options &&
-                    <Form className="NewStatus-Form" onSubmit={this.handleSubmit}>
-                        <Form.Group inline>
+                    <Form className="NewStatus-Form" onSubmit={(e) => { e.preventDefault(); this.handleSubmit(); }}>
+                        <Form.Group widths='1'>
                             <Form.Field className='NewStatus-Field'>
                                 <Form.Select
                                     label='Analysis or symptom'
@@ -77,16 +163,11 @@ export default class NewStatusForm extends React.Component {
                                 />
                             </Form.Field>
                             <Form.Field className='NewStatus-Field'>
-                                <Form.Field
-                                    control={Input}
-                                    label='Result'
-                                    value={result}
-                                    onChange={this.onResultChange}
-                                />
+                                {this.getResultFromType()}
                             </Form.Field>
-                            <Button type='submit' basic color='green'>Submit</Button>
                             {healthMatter && result &&
-                            <AssociationForm style={{ position: 'relative' }} getData={this.getAssociationData}/>}
+                                <AssociationForm style={{ position: 'relative' }} getData={this.getAssociationData}/>
+                            }
                         </Form.Group>
                     </Form>}
             </section>

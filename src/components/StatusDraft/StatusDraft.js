@@ -6,7 +6,7 @@ import AssociationForm from '../AssociationForm/AssociationForm';
 import * as draftThunks from '../../redux/thunks/draft';
 import * as nextStatesThunks from '../../redux/thunks/nextStates';
 import * as diseaseThunks from '../../redux/thunks/disease';
-import store from '../../redux';
+import { toast } from 'react-semantic-toasts';
 import './StatusDraft.css';
 
 export class StatusDraftContainer extends React.Component {
@@ -31,12 +31,12 @@ export class StatusDraftContainer extends React.Component {
         });
     }
 
-  getAssociationData = () => {
-      return {
-          predicate: `eq({status.state.id}, ${this.props.draft.state.id})`,
-          type: 'state'
-      };
-  };
+    getAssociationData = () => {
+        return {
+            predicate: `eq({status.state.id}, ${this.props.draft.state.id})`,
+            type: 'state'
+        };
+    };
 
     onPlusClick = (name) => () => {
         switch (name) {
@@ -58,11 +58,32 @@ export class StatusDraftContainer extends React.Component {
     onDraftSubmit = async () => {
         this.setState({ disableSubmit: true });
 
-        const { id } = this.props.patient;
-        await this.onDraftUpdate();
-        alert('saved!');
-        await this.props.commitDraft(id);
-        await this.props.updatePatientStatusData(id);
+        try {
+            await this.onDraftUpdate();
+
+            const { id } = this.props.patient;
+
+            await this.props.commitDraft(id);
+            await this.props.updatePatientStatusData(id);
+
+            toast({
+                type: 'success',
+                icon: 'save',
+                title: 'Черновик сохранен',
+                animation: 'bounce',
+                time: 5000
+            });
+        } catch (e) {
+            console.error(e);
+
+            toast({
+                type: 'error',
+                icon: 'save',
+                title: 'Ошибка при сохраненении',
+                animation: 'bounce',
+                time: 3000
+            });
+        }
 
         this.setState({ disableSubmit: false });
     };
@@ -107,66 +128,57 @@ export class StatusDraftContainer extends React.Component {
         let attributes = draft.attributes || [];
         let currentMedicines = draft.medicines || [];
 
-        const { symptomsAmount, medicinesAmount } = this.state;
-        let diseaseData = disease.filter(diseaseItem => {
+        const { medicinesAmount } = this.state;
+
+        let notYetChosenAttributes = disease.filter(diseaseItem => {
             return !attributes.some(attribute => attribute.id === diseaseItem.id);
         });
-        console.log('STORE', store.getState());
+        let alreadyChosenAttributes = disease.filter(diseaseItem => {
+            return attributes.some(attribute => attribute.id === diseaseItem.id);
+        });
 
         return (
             <div className='States-Draft Draft'>
                 <AssociationForm getData={this.getAssociationData}/>
                 <h2 className='States-Heading'>Черновик состояния</h2>
-                <p>
-                    last updated: {status.submittedOn}
-                </p>
+                <time className='Draft-UpdatedOn'>
+                    Updated on: {status.submittedOn}
+                </time>
                 {currentState &&
-                 <div>
-                     <p>Текущее состояние</p>
-                     <p>state name: {currentState.name}</p>
-                     <p>
-                          description:{currentState.description}
-                     </p>
-                     {currentMedicines.length !== 0 && <h3>Лекарства</h3>}
-                     {currentMedicines && currentMedicines.map(medicineId =>
-                         <p key={medicineId}>
-                             {medicines.find(medicine => medicine.id === medicineId).name}
-                         </p>)
-                     }
-                 </div>
+                <div>
+                    <p><b>Текущее состояние</b></p>
+                    <p>state name: {currentState.name}</p>
+                    <p>
+                        description: {currentState.description}
+                    </p>
+                    {currentMedicines.length !== 0 && <h3>Лекарства</h3>}
+                    {currentMedicines && currentMedicines.map(medicineId =>
+                        <p key={medicineId}>
+                            {medicines.find(medicine => medicine.id === medicineId).name}
+                        </p>)
+                    }
+                </div>
                 }
-                <Divider fitted/>
+                <Divider />
                 {attributes && attributes.map(attribute => (
                     <NewStatusForm
                         key={attribute.id}
                         patientId={patient.id}
                         statusId={status.id}
                         onDraftUpdate={this.onDraftUpdate}
-                        diseaseData={[attribute]}
+                        diseaseData={alreadyChosenAttributes.filter(attr => attr.id === attribute.id)}
                         attribute={attribute}
                         // disabled
                     />
                 ))}
-                {diseaseData && new Array(symptomsAmount).fill(true).map((el, index) =>
-                    <div className='Draft-StatusFormContainer' key={index}>
-                        {index === symptomsAmount - 1 &&
-                        <Icon
-                            name='plus circle'
-                            color='green'
-                            size='large'
-                            className='Draft-PlusButton'
-                            onClick={this.onPlusClick('attribute')}
-                        />
-                        }
-                        <NewStatusForm
-                            className={index < symptomsAmount - 1 ? 'Draft-StatusForm--Margined' : ''}
-                            patientId={patient.id}
-                            statusId={status.id}
-                            onDraftUpdate={this.onDraftUpdate}
-                            diseaseData={diseaseData}
-                        />
-                    </div>
-                )}
+                {notYetChosenAttributes &&
+                    <NewStatusForm
+                        patientId={patient.id}
+                        statusId={status.id}
+                        onDraftUpdate={this.onDraftUpdate}
+                        diseaseData={notYetChosenAttributes}
+                    />
+                }
                 <Divider fitted/>
                 {medicines.length > 0 && new Array(medicinesAmount).fill(true).map((el, index) =>
                     <div className='Draft-StatusFormContainer' key={index}>
@@ -191,7 +203,10 @@ export class StatusDraftContainer extends React.Component {
                         />
                         {currentMedicines[index] && <AssociationForm
                             style={{ position: 'relative' }}
-                            getData={() => ({ predicate: `eq({medicine.id}, ${currentMedicines[index]})`, type: 'medicine' })}
+                            getData={() => ({
+                                predicate: `eq({medicine.id}, ${currentMedicines[index]})`,
+                                type: 'medicine'
+                            })}
                         />}
                     </div>
                 )}

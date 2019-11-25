@@ -3,6 +3,10 @@
     flex-flow: row nowrap;
     align-items: center;
 }
+.Draft-UpdatedOn {
+    float: right;
+    color: #999;
+}
 .Draft-PlusButton {
     cursor: pointer;
 }
