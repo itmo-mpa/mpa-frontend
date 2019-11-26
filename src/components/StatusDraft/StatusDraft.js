@@ -55,15 +55,14 @@ export class StatusDraftContainer extends React.Component {
         }
     };
 
-    onDraftSubmit = async () => {
+    onDraftSubmit = async (data) => {
         this.setState({ disableSubmit: true });
 
         try {
-            await this.onDraftUpdate();
-
             const { id } = this.props.patient;
 
             await this.props.commitDraft(id);
+            await this.props.createDraft(id, data);
             await this.props.updatePatientStatusData(id);
 
             toast({
@@ -118,6 +117,7 @@ export class StatusDraftContainer extends React.Component {
         };
 
         await this.props.createDraft(patient.id, data);
+        await this.onDraftSubmit(data);
         await this.props.getNextStates(patient.id);
     };
 
@@ -210,10 +210,6 @@ export class StatusDraftContainer extends React.Component {
                         />}
                     </div>
                 )}
-                <br/>
-                <Button type="submit" fluid positive onClick={this.onDraftSubmit} disabled={this.state.disableSubmit}>
-                    Сохранить черновик
-                </Button>
             </div>
         );
     }
