@@ -33,7 +33,13 @@ export default class NewStatusForm extends React.Component {
             return;
         }
 
-        const name = this.props.diseaseData.find(data => data.id === healthMatter).name;
+        const attribute = this.props.diseaseData.find(data => data.id === healthMatter);
+
+        if (!attribute) {
+            return;
+        }
+
+        const { name } = attribute;
 
         await onDraftUpdate(
             { id: healthMatter, value: result, name }
