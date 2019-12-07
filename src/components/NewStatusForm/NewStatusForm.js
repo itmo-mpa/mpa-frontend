@@ -10,17 +10,21 @@ export default class NewStatusForm extends React.Component {
     };
 
     componentDidMount () {
+        this.updateState();
+    }
+
+    updateState () {
         const { attribute } = this.props;
 
-        if (attribute) {
-            this.setState({
-                healthMatter: attribute.id,
-                result: attribute.value
-            });
-        } else {
+        if (!attribute || !attribute.id) {
             this.setState({
                 healthMatter: '',
                 result: ''
+            });
+        } else {
+            this.setState({
+                healthMatter: attribute.id,
+                result: attribute.value
             });
         }
     }
@@ -44,11 +48,6 @@ export default class NewStatusForm extends React.Component {
         await onDraftUpdate(
             { id: healthMatter, value: result, name }
         );
-
-        this.setState({
-            healthMatter: '',
-            result: ''
-        });
     };
 
     onHMChange = async (e, { value }) => {
@@ -100,6 +99,13 @@ export default class NewStatusForm extends React.Component {
             props.label = 'Observed';
             props.defaultChecked = props.value ? JSON.parse(props.value) : false;
 
+            props.onChange = async (...args) => {
+                await this.onResultChange(...args);
+
+                await this.handleSubmit();
+            };
+
+            delete props.onBlur;
             delete props.value;
 
             return (
@@ -154,7 +160,6 @@ export default class NewStatusForm extends React.Component {
 
         return (
             <section className={`NewStatus ${className || ''}`}>
-
                 {options &&
                     <Form className="NewStatus-Form" onSubmit={(e) => { e.preventDefault(); this.handleSubmit(); }}>
                         <Form.Group widths='1'>
@@ -171,7 +176,7 @@ export default class NewStatusForm extends React.Component {
                             <Form.Field className='NewStatus-Field'>
                                 {this.getResultFromType()}
                             </Form.Field>
-                            {healthMatter && result &&
+                            {healthMatter && !!result &&
                                 <AssociationForm style={{ position: 'relative' }} getData={this.getAssociationData}/>
                             }
                         </Form.Group>

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Dimmer, Divider, Icon, Loader, Select } from 'semantic-ui-react';
 import NewStatusForm from '../NewStatusForm/NewStatusForm';
 import AssociationForm from '../AssociationForm/AssociationForm';
+import * as patientThunks from '../../redux/thunks/patient';
 import * as draftThunks from '../../redux/thunks/draft';
 import * as nextStatesThunks from '../../redux/thunks/nextStates';
 import * as diseaseThunks from '../../redux/thunks/disease';
@@ -13,7 +14,8 @@ export class StatusDraftContainer extends React.Component {
     state = {
         symptomsAmount: 1,
         medicinesAmount: 1,
-        disableSubmit: false
+        disableSubmit: false,
+        attributesLoading: false
     };
 
     componentDidMount () {
@@ -88,6 +90,10 @@ export class StatusDraftContainer extends React.Component {
     };
 
     onDraftUpdate = async (attribute, medicineId) => {
+        await this.setState({
+            attributesLoading: true
+        });
+
         const { patient, draft } = this.props;
         const status = patient.status;
         const state = draft.state || status.state;
@@ -119,6 +125,12 @@ export class StatusDraftContainer extends React.Component {
         await this.props.createDraft(patient.id, data);
         await this.onDraftSubmit(data);
         await this.props.getNextStates(patient.id);
+        await this.props.getDraft(patient.id);
+        await this.props.getPatient(patient.id);
+
+        await this.setState({
+            attributesLoading: false
+        });
     };
 
     render () {
@@ -164,25 +176,30 @@ export class StatusDraftContainer extends React.Component {
                     </div>
                     }
                     <Divider/>
-                    {attributes && attributes.map(attribute => (
+                    <div style={{ position: 'relative' }}>
+                        <Dimmer active={this.state.attributesLoading} inverted>
+                            <Loader />
+                        </Dimmer>
+                        {attributes && attributes.map(attribute => (
+                            <NewStatusForm
+                                key={attribute.id}
+                                patientId={patient.id}
+                                statusId={status.id}
+                                onDraftUpdate={this.onDraftUpdate}
+                                diseaseData={alreadyChosenAttributes.filter(attr => attr.id === attribute.id)}
+                                attribute={attribute}
+                                // disabled
+                            />
+                        ))}
+                        {notYetChosenAttributes &&
                         <NewStatusForm
-                            key={attribute.id}
                             patientId={patient.id}
                             statusId={status.id}
                             onDraftUpdate={this.onDraftUpdate}
-                            diseaseData={alreadyChosenAttributes.filter(attr => attr.id === attribute.id)}
-                            attribute={attribute}
-                            // disabled
+                            diseaseData={notYetChosenAttributes}
                         />
-                    ))}
-                    {notYetChosenAttributes &&
-                    <NewStatusForm
-                        patientId={patient.id}
-                        statusId={status.id}
-                        onDraftUpdate={this.onDraftUpdate}
-                        diseaseData={notYetChosenAttributes}
-                    />
-                    }
+                        }
+                    </div>
                     <Divider fitted/>
                     {medicines.length > 0 && new Array(medicinesAmount).fill(true).map((el, index) =>
                         <div className='Draft-StatusFormContainer' key={index}>
@@ -228,6 +245,7 @@ export const StatusDraft = connect(
         medicines: store.medicines
     }),
     {
+        getPatient: patientThunks.get,
         getDraft: draftThunks.get,
         clearDraft: draftThunks.clear,
         commitDraft: draftThunks.commit,

@@ -1,4 +1,5 @@
 .NewStatus{
+    position: relative;
     margin-top: 1rem;
     background-color: white;
     padding: .5rem;
