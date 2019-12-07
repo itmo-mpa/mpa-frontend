@@ -56,6 +56,7 @@ export class StatesContainer extends React.Component {
 
         this.props.createDraft(this.props.patientId, { stateId: state.id });
         this.props.getNextStates(this.props.patientId);
+        this.props.getDraft(this.props.patientId);
     };
 
     associationData = () => {
