@@ -51,12 +51,13 @@ export class StatesContainer extends React.Component {
         console.log('GET diseaseData', this.props.disease);
     };
 
-    confirmState = (state) => {
+    confirmState = async (state) => {
         this.props.updateState(state);
 
-        this.props.createDraft(this.props.patientId, { stateId: state.id });
-        this.props.getNextStates(this.props.patientId);
-        this.props.getDraft(this.props.patientId);
+        await this.props.createDraft(this.props.patientId, { stateId: state.id });
+        await this.props.getPatient(this.props.patientId);
+        await this.props.getDraft(this.props.patientId);
+        await this.props.getNextStates(this.props.patientId);
     };
 
     associationData = () => {
