@@ -13,6 +13,10 @@ import { StatusDraft } from '../StatusDraft/StatusDraft';
 import './States.css';
 
 export class StatesContainer extends React.Component {
+    state = {
+        loading: false
+    };
+
     componentDidMount () {
         this.props.getDiseases();
     }
@@ -54,10 +58,16 @@ export class StatesContainer extends React.Component {
     confirmState = async (state) => {
         this.props.updateState(state);
 
+        await this.setState({
+            loading: true
+        });
         await this.props.createDraft(this.props.patientId, { stateId: state.id });
         await this.props.getPatient(this.props.patientId);
         await this.props.getDraft(this.props.patientId);
         await this.props.getNextStates(this.props.patientId);
+        await this.setState({
+            loading: false
+        });
     };
 
     associationData = () => {
@@ -74,7 +84,7 @@ export class StatesContainer extends React.Component {
             <React.Fragment>
                 {status && (<section className="States">
                     <div className="States-DraftWrap States-Wrap">
-                        <StatusDraft updatePatientStatusData={this.updatePatientStatusData}/>
+                        <StatusDraft updatePatientStatusData={this.updatePatientStatusData} loading={this.state.loading}/>
                         <Graph stateId={status.state.id}/>
                     </div>
                     {nextStates.length ? <div className="States-NextWrap States-Wrap">

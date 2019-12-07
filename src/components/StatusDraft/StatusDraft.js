@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button, Divider, Icon, Select } from 'semantic-ui-react';
+import { Dimmer, Divider, Icon, Loader, Select } from 'semantic-ui-react';
 import NewStatusForm from '../NewStatusForm/NewStatusForm';
 import AssociationForm from '../AssociationForm/AssociationForm';
 import * as draftThunks from '../../redux/thunks/draft';
@@ -139,77 +139,82 @@ export class StatusDraftContainer extends React.Component {
 
         return (
             <div className='States-Draft Draft'>
-                <AssociationForm getData={this.getAssociationData}/>
-                <h2 className='States-Heading'>Черновик состояния</h2>
-                <time className='Draft-UpdatedOn'>
-                    Updated on: {status.submittedOn}
-                </time>
-                {currentState &&
-                <div>
-                    <p><b>Текущее состояние</b></p>
-                    <p>state name: {currentState.name}</p>
-                    <p>
-                        description: {currentState.description}
-                    </p>
-                    {currentMedicines.length !== 0 && <h3>Лекарства</h3>}
-                    {currentMedicines && currentMedicines.map(medicineId =>
-                        <p key={medicineId}>
-                            {medicines.find(medicine => medicine.id === medicineId).name}
-                        </p>)
+                <Dimmer.Dimmable blurring dimmed={this.props.loading}>
+                    <Dimmer active={this.props.loading} inverted>
+                        <Loader/>
+                    </Dimmer>
+                    <AssociationForm getData={this.getAssociationData}/>
+                    <h2 className='States-Heading'>Черновик состояния</h2>
+                    <time className='Draft-UpdatedOn'>
+                        Updated on: {status.submittedOn}
+                    </time>
+                    {currentState &&
+                    <div>
+                        <p><b>Текущее состояние</b></p>
+                        <p>state name: {currentState.name}</p>
+                        <p>
+                            description: {currentState.description}
+                        </p>
+                        {currentMedicines.length !== 0 && <h3>Лекарства</h3>}
+                        {currentMedicines && currentMedicines.map(medicineId =>
+                            <p key={medicineId}>
+                                {medicines.find(medicine => medicine.id === medicineId).name}
+                            </p>)
+                        }
+                    </div>
                     }
-                </div>
-                }
-                <Divider />
-                {attributes && attributes.map(attribute => (
-                    <NewStatusForm
-                        key={attribute.id}
-                        patientId={patient.id}
-                        statusId={status.id}
-                        onDraftUpdate={this.onDraftUpdate}
-                        diseaseData={alreadyChosenAttributes.filter(attr => attr.id === attribute.id)}
-                        attribute={attribute}
-                        // disabled
-                    />
-                ))}
-                {notYetChosenAttributes &&
+                    <Divider/>
+                    {attributes && attributes.map(attribute => (
+                        <NewStatusForm
+                            key={attribute.id}
+                            patientId={patient.id}
+                            statusId={status.id}
+                            onDraftUpdate={this.onDraftUpdate}
+                            diseaseData={alreadyChosenAttributes.filter(attr => attr.id === attribute.id)}
+                            attribute={attribute}
+                            // disabled
+                        />
+                    ))}
+                    {notYetChosenAttributes &&
                     <NewStatusForm
                         patientId={patient.id}
                         statusId={status.id}
                         onDraftUpdate={this.onDraftUpdate}
                         diseaseData={notYetChosenAttributes}
                     />
-                }
-                <Divider fitted/>
-                {medicines.length > 0 && new Array(medicinesAmount).fill(true).map((el, index) =>
-                    <div className='Draft-StatusFormContainer' key={index}>
-                        {index === medicinesAmount - 1 &&
-                        <Icon
-                            name='plus circle'
-                            color='green'
-                            size='large'
-                            className='Draft-PlusButton'
-                            onClick={this.onPlusClick('medicine')}
-                        />
-                        }
-                        <Select
-                            placeholder='Лекарство'
-                            options={medicines.map(medicine => ({
-                                value: medicine.id,
-                                key: medicine.id,
-                                text: medicine.name
-                            }))}
-                            value={currentMedicines[index] ? currentMedicines[index] : undefined}
-                            onChange={(e, option) => this.onDraftUpdate(undefined, option.value)}
-                        />
-                        {currentMedicines[index] && <AssociationForm
-                            style={{ position: 'relative' }}
-                            getData={() => ({
-                                predicate: `eq({medicine.id}, ${currentMedicines[index]})`,
-                                type: 'medicine'
-                            })}
-                        />}
-                    </div>
-                )}
+                    }
+                    <Divider fitted/>
+                    {medicines.length > 0 && new Array(medicinesAmount).fill(true).map((el, index) =>
+                        <div className='Draft-StatusFormContainer' key={index}>
+                            {index === medicinesAmount - 1 &&
+                            <Icon
+                                name='plus circle'
+                                color='green'
+                                size='large'
+                                className='Draft-PlusButton'
+                                onClick={this.onPlusClick('medicine')}
+                            />
+                            }
+                            <Select
+                                placeholder='Лекарство'
+                                options={medicines.map(medicine => ({
+                                    value: medicine.id,
+                                    key: medicine.id,
+                                    text: medicine.name
+                                }))}
+                                value={currentMedicines[index] ? currentMedicines[index] : undefined}
+                                onChange={(e, option) => this.onDraftUpdate(undefined, option.value)}
+                            />
+                            {currentMedicines[index] && <AssociationForm
+                                style={{ position: 'relative' }}
+                                getData={() => ({
+                                    predicate: `eq({medicine.id}, ${currentMedicines[index]})`,
+                                    type: 'medicine'
+                                })}
+                            />}
+                        </div>
+                    )}
+                </Dimmer.Dimmable>
             </div>
         );
     }

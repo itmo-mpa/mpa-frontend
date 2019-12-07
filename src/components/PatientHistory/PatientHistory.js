@@ -10,15 +10,14 @@ class PatientHistoryContainer extends React.Component {
     }
 
     render () {
-        const { birthDate } = this.props.patient;
+        // const { birthDate } = this.props.patient;
         const { history } = this.props;
 
-        const dateObj = new Date(birthDate);
-        const year = dateObj.getFullYear();
-        const month = dateObj.getMonth();
-        const now = new Date();
-
-        const age = now.getFullYear() - year + (now.getMonth() - month < 0 ? 1 : 0);
+        // const dateObj = new Date(birthDate);
+        // const year = dateObj.getFullYear();
+        // const month = dateObj.getMonth();
+        // const now = new Date();
+        // const age = now.getFullYear() - year + (now.getMonth() - month < 0 ? 1 : 0);
 
         return (
             <section className="History">

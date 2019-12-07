@@ -1,3 +1,7 @@
+.Draft {
+    position: relative;
+}
+
 .Draft-StatusFormContainer {
     display: flex;
     flex-flow: row nowrap;

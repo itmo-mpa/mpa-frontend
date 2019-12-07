@@ -7,7 +7,7 @@ export class GraphContainer extends React.Component {
     render () {
         const { stateId } = this.props;
 
-        return stateId ? <img src={`${baseUrl}/states/${stateId}/images`} /> : null;
+        return stateId ? <img alt="graph" src={`${baseUrl}/states/${stateId}/images`} /> : null;
     }
 }
 

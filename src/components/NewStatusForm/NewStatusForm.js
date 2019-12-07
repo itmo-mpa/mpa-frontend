@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Form, Button, Input } from 'semantic-ui-react';
+import { Form, Input } from 'semantic-ui-react';
 import './NewStatusForm.css';
 import AssociationForm from '../AssociationForm/AssociationForm';
 
