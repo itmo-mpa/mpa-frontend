@@ -11,8 +11,8 @@ export const clear = () => ({
 });
 
 const defaultState = {
-  states: [],
-  transitions: []
+    states: [],
+    transitions: []
 };
 
 export default (state = defaultState, action) => {
