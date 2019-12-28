@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {Button, Dimmer, Divider, Loader, Modal, Select} from 'semantic-ui-react';
+import { Dimmer, Divider, Loader, Select } from 'semantic-ui-react';
 import NewStatusForm from '../NewStatusForm/NewStatusForm';
 import AssociationForm from '../AssociationForm/AssociationForm';
-import ProcedureDataUploader from '../ProcedureDataUploader/ProcedureDataUploader';
 import * as patientThunks from '../../redux/thunks/patient';
 import * as draftThunks from '../../redux/thunks/draft';
 import * as nextStatesThunks from '../../redux/thunks/nextStates';
@@ -15,8 +14,7 @@ export class StatusDraftContainer extends React.Component {
     state = {
         symptomsAmount: 1,
         medicinesAmount: 1,
-        disableSubmit: false,
-        medicineModalOpen: false,
+        disableSubmit: false
     };
 
     componentDidMount () {
@@ -112,7 +110,6 @@ export class StatusDraftContainer extends React.Component {
 
         if (medicineId) {
             this.setState({
-                medicineModalOpen: true,
                 loading: false
             });
             return;
@@ -216,18 +213,6 @@ export class StatusDraftContainer extends React.Component {
                                 </div>
                             )
                         }
-                        <Modal
-                            open={this.state.medicineModalOpen}
-                        >
-                            <Modal.Content>
-                                Препарат Лозартан несовместим с уже назначенным препаратом Эналаприл
-                            </Modal.Content>
-                            <Modal.Actions>
-                                <Button onClick={() => this.setState({medicineModalOpen: false})}>
-                                    OK
-                                </Button>
-                            </Modal.Actions>
-                        </Modal>
                     </div>
                     }
                     <Divider/>
@@ -253,7 +238,6 @@ export class StatusDraftContainer extends React.Component {
                             />
                         }
                     </div>
-                    <ProcedureDataUploader/>
                 </Dimmer.Dimmable>
             </div>
         );
