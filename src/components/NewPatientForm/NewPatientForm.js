@@ -72,39 +72,3 @@ export const NewPatientForm = connect(
         create: patientThunks.create
     }
 )(NewPatientFormContainer);
-
-    handleOnChange = (value, attr) => this.setState({ [attr]: value });
-
-    render () {
-        return (
-            <section className={'NewPatientForm'}>
-                <h2>Создать нового пациента</h2>
-                <Form>
-                    <Form.Field label="Name" type="text" control={Input}
-                        onChange={(event) => this.handleOnChange(event.target.value, 'name')}/>
-                    <Form.Field label="Gender" control={Select} options={genderOptions}
-                        onChange={(event) => this.handleOnChange(event.target.innerText, 'gender')}/>
-                    <Form.Field>
-                        <label>Age</label>
-                        <SemanticDatepicker onDateChange={(date) => this.handleOnChange(date, 'birthDate')}/>
-                    </Form.Field>
-                    < Button
-                        positive
-                        icon='checkmark'
-                        content="Save"
-                        type='submit'
-                        onClick={this.savePatient}
-                    />
-                </Form>
-
-            </section>
-        );
-    }
-}
-
-export const NewPatientForm = connect(
-    null,
-    {
-        create: patientThunks.create
-    }
-)(NewPatientFormContainer);
