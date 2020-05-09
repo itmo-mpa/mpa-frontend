@@ -10,16 +10,22 @@ const genderOptions = [
     { key: 'f', text: 'Female', value: 'female' }
 ];
 
+const diseasesOptions = [
+  {key: '1', text: 'Arrhythmia', value: 1},
+  {key: '2', text: 'Venticular Arrhythmia', value: 2}
+];
+
+
 class NewPatientFormContainer extends React.Component {
     savePatient = (event) => {
         event.preventDefault();
-        const { name, birthDate } = this.state;
+        const { name, birthDate, diseaseId } = this.state;
         console.log(this.state)
         // TODO: попробовать отправлять на бек данные о поле пациента
         const patientData = {
             name: name,
             birthDate: birthDate.toISOString().substring(0, 10),
-            diseaseId: 1,
+            diseaseId: diseaseId,
             doctorId: 1
         };
 
@@ -38,6 +44,10 @@ class NewPatientFormContainer extends React.Component {
                         onChange={(event) => this.handleOnChange(event.target.value, 'name')}/>
                     <Form.Field label="Gender" control={Select} options={genderOptions}
                         onChange={(event) => this.handleOnChange(event.target.innerText, 'gender')}/>
+                    <Form.Field label="Disease" control={Select} options={diseasesOptions}
+                        onChange={(event) => {
+                        diseasesOptions.forEach(option => {if (option.text === event.target.innerText) this.handleOnChange(option.value, 'diseaseId')});
+                        }}/>
                     <Form.Field>
                         <label>Age</label>
                         <SemanticDatepicker onDateChange={(date) => this.handleOnChange(date, 'birthDate')}/>
