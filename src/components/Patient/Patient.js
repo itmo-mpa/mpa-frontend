@@ -8,13 +8,21 @@ import * as patientThunks from '../../redux/thunks/patient';
 import './Patient.css';
 
 class PatientContainer extends React.PureComponent {
+    constructor () {
+        super();
+        this.state = { loaded: false };
+    }
+
     componentDidMount () {
-        this.props.getPatient(this.props.match.params.patientId);
+        this.props.getPatient(this.props.match.params.patientId)
+            .then(() => this.setState({ loaded: true }));
     }
 
     render () {
+        const { loaded } = this.state;
         const { patient } = this.props;
-        if (!patient.id) {
+
+        if (!loaded) {
             return (
                 <Dimmer active inverted>
                     <Loader inverted/>
