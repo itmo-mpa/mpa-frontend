@@ -13,18 +13,23 @@ const genderOptions = [
 class NewPatientFormContainer extends React.Component {
     savePatient = (event) => {
         event.preventDefault();
-        const { name, birthDate } = this.state;
-        console.log(this.state)
-        // TODO: попробовать отправлять на бек данные о поле пациента
-        const patientData = {
-            name: name,
-            birthDate: birthDate.toISOString().substring(0, 10),
-            diseaseId: 1,
-            doctorId: 1
-        };
 
-        this.props.create(patientData);
-        alert('created');
+        if (this.state !== null) {
+            const { name, birthDate } = this.state;
+
+            if (name !== null && birthDate !== null) {
+                // TODO: попробовать отправлять на бек данные о поле пациента
+                const patientData = {
+                    name: name,
+                    birthDate: birthDate.toISOString().substring(0, 10),
+                    diseaseId: 1,
+                    doctorId: 1
+                };
+
+                this.props.create(patientData);
+                alert('created');
+            }
+        }
     };
 
     handleOnChange = (value, attr) => this.setState({ [attr]: value });
