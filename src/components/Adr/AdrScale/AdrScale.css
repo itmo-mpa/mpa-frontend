@@ -1,0 +1,23 @@
+.AdrScale-Name {
+    font-weight: bold;
+}
+
+.AdrScale-Item {
+    display: inline-block;
+    border: 1px solid black;
+    border-right: none;
+    padding: 5px;
+    width: 100px;
+}
+
+.AdrScale-Item:last-child {
+    border-right: 1px solid black;
+}
+
+.AdrScale-Item_active {
+    background-color: #00B5AD;
+}
+
+.AdrScale_margin {
+    margin-bottom: 5px;
+}

@@ -1,0 +1,8 @@
+.Adr-Icon {
+    position: absolute;
+    cursor: pointer;
+}
+
+.Adr-Icon_right {
+    right: 10px;
+}
