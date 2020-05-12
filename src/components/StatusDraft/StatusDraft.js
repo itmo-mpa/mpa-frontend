@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Dimmer, Divider, Loader, Select } from 'semantic-ui-react';
 import NewStatusForm from '../NewStatusForm/NewStatusForm';
 import AssociationForm from '../AssociationForm/AssociationForm';
+import Adr from '../Adr/Adr';
 import * as patientThunks from '../../redux/thunks/patient';
 import * as draftThunks from '../../redux/thunks/draft';
 import * as nextStatesThunks from '../../redux/thunks/nextStates';
@@ -188,6 +189,10 @@ export class StatusDraftContainer extends React.Component {
                                             predicate: `eq({medicine.id}, ${currentMedicines[index]})`,
                                             type: 'medicine'
                                         })}
+                                    />
+                                    <Adr
+                                        style={{ position: 'relative' }}
+                                        medicineId = {medicine.id}
                                     />
                                 </div>
                             ))
