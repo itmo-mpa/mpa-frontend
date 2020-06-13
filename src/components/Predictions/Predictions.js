@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Form, Modal, Select } from 'semantic-ui-react';
 import './Predictions.css';
+import { baseUrl } from '../../Services/fetchService';
 import { post } from 'axios';
 
 export class Prediction extends Component {
@@ -9,10 +10,13 @@ export class Prediction extends Component {
         this.state = {
             isModalOpen: false,
             isAnalysisModalOpen: false,
-            file: '',
-            fileName: ''
+            file: null,
+            vstr: '',
+            maxValue1: '',
+            maxValue2: '',
+            disease1: '',
+            disease2: ''
         };
-        this.state = { result: '' };
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.onChange = this.onChange.bind(this);
         this.fileUpload = this.fileUpload.bind(this);
@@ -25,32 +29,62 @@ export class Prediction extends Component {
         this.setState({ isAnalysisModalOpen: false });
     };
 
-    fileUpload (file) {
-        const url = 'http://51.15.100.12:8080/predictions';
-        // const formData = new FormData();
-        // formData.append('files', file);
-        const formData = {
-            file: this.state.fileName
-        };
+    async fileUpload (file) {
+        const url = baseUrl + '/predictions';
+        const formData = new FormData();
+        formData.append('file', file);
         const config = {
             headers: {
-                'content-type': 'application/json'
+                'content-type': 'multipart/form-data'
             }
         };
-        // 'content-type': 'multipart/form-data'
         return post(url, formData, config);
     }
     onChange (e) {
         this.setState({
-            file: e.target.files[0],
-            fileName: e.target.files[0].name
+            file: e.target.files[0]
         });
     }
-    onFormSubmit (e) {
-        this.fileUpload(this.state.fileName)
+
+    indexOfMax (arr) {
+        if (arr.length === 0) {
+            return -1;
+        }
+
+        let max = arr[0];
+        let maxIndex = 0;
+
+        for (let i = 1; i < arr.length; i++) {
+            if (arr[i] > max) {
+                maxIndex = i;
+                max = arr[i];
+            }
+        }
+        let newArr = arr.slice();
+        newArr.splice({ maxIndex }, 1);
+        let max2 = newArr[0];
+        for (let i = 1; i < newArr.length; i++) {
+            if (newArr[i] > max2) {
+                max2 = newArr[i];
+            }
+        }
+        let maxIndex2 = arr.indexOf(max2);
+        return [maxIndex, max, maxIndex2, max2];
+    }
+    async onFormSubmit (e) {
+        this.fileUpload(this.state.file)
             .then((response) => {
                 for (let [key, value] of Object.entries(response.data)) {
-                    this.setState({ result: `${key} : ${value}` });
+                    this.setState({ vstr: `${value}` });
+                    let arr = this.state.vstr.split(',');
+                    let diseases = ['Неэктопические ритмы', 'Эктопические ритмы', 'Желудочковые не эктопические ритмы', 'Смешанные ритмы', 'Ритмы без классификации'];
+                    this.setState({
+                        maxValue1: this.indexOfMax(arr)[1] * 100,
+                        disease1: diseases[this.indexOfMax(arr)[0]],
+                        maxValue2: this.indexOfMax(arr)[3] * 100,
+                        disease2: diseases[this.indexOfMax(arr)[2]]
+                    }
+                    );
                 }
                 console.log(response);
             });
@@ -58,7 +92,7 @@ export class Prediction extends Component {
     }
 
     render () {
-        const { result } = this.state;
+        const { result, maxValue1, maxValue2, disease1, disease2 } = this.state;
         return (
             <div>
                 <Modal className="Data-Input-Modal"
@@ -98,9 +132,10 @@ export class Prediction extends Component {
                             onClose={this.closeAnalysisModal}
                         >
                             <Form>
-                                <p>
-                                    {result}
-                                </p>
+                                <p>Вероятность болезней:</p>
+                                <p>{disease1} - {maxValue1}%,</p>
+                                <p>{disease2} - {maxValue2}%.</p>
+
                                 <Button type="submit" onClick={() => {
                                     this.setState({ isAnalysisModalOpen: false });
                                 }}>Закрыть</Button>

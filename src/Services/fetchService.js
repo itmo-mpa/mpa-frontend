@@ -1,4 +1,4 @@
-export const baseUrl = 'http://51.15.100.12:8080';
+export const baseUrl = 'http://51.158.109.80:8080';
 
 export function get (url) {
     const params = {
