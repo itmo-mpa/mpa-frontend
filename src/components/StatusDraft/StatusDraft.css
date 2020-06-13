@@ -21,3 +21,7 @@
 .Draft .ui.form .inline.fields{
     align-items: flex-end;
 }
+.Draft .blurring.dimmable>:not(.dimmer){
+    transition: none;
+    filter: none;
+}

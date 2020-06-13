@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Dimmer, Divider, Loader, Select } from 'semantic-ui-react';
 import NewStatusForm from '../NewStatusForm/NewStatusForm';
 import AssociationForm from '../AssociationForm/AssociationForm';
+import Prediction from '../Predictions/Predictions';
 import * as patientThunks from '../../redux/thunks/patient';
 import * as draftThunks from '../../redux/thunks/draft';
 import * as nextStatesThunks from '../../redux/thunks/nextStates';
@@ -232,6 +233,7 @@ export class StatusDraftContainer extends React.Component {
                             />
                         }
                     </div>
+                    <Prediction />
                 </Dimmer.Dimmable>
             </div>
         );
