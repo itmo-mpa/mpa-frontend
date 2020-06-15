@@ -4,6 +4,8 @@ import './Predictions.css';
 import { baseUrl } from '../../Services/fetchService';
 import { post } from 'axios';
 
+let stat = 0;
+
 export class Prediction extends Component {
     constructor (props) {
         super(props);
@@ -74,25 +76,42 @@ export class Prediction extends Component {
     async onFormSubmit (e) {
         this.fileUpload(this.state.file)
             .then((response) => {
-                for (let [key, value] of Object.entries(response.data)) {
-                    this.setState({ vstr: `${value}` });
-                    let arr = this.state.vstr.split(',');
-                    let diseases = ['Неэктопические ритмы', 'Эктопические ритмы', 'Желудочковые не эктопические ритмы', 'Смешанные ритмы', 'Ритмы без классификации'];
-                    this.setState({
-                        maxValue1: this.indexOfMax(arr)[1] * 100,
-                        disease1: diseases[this.indexOfMax(arr)[0]],
-                        maxValue2: this.indexOfMax(arr)[3] * 100,
-                        disease2: diseases[this.indexOfMax(arr)[2]]
+                if (response.status === 200) {
+                    for (let [, value] of Object.entries(response.data)) {
+                        this.setState({ vstr: `${value}` });
+                        let arr = this.state.vstr.split(',');
+                        let diseases = ['Неэктопические ритмы', 'Эктопические ритмы', 'Желудочковые не эктопические ритмы', 'Смешанные ритмы', 'Ритмы без классификации'];
+                        this.setState({
+                            maxValue1: this.indexOfMax(arr)[1] * 100,
+                            disease1: diseases[this.indexOfMax(arr)[0]],
+                            maxValue2: this.indexOfMax(arr)[3] * 100,
+                            disease2: diseases[this.indexOfMax(arr)[2]]
+                        }
+                        );
                     }
-                    );
                 }
-                console.log(response);
-            });
+            })
+            .then((response) => {
+                if (response.headers['content-type'] !== 'application/json') {
+                    let error = new Error('Некорректный ответ от сервера');
+                    error.response = response;
+                    throw error;
+                }
+                return response;
+            })
+            .then(response => response.json())
+            .then(data => console.log('+', data))
+            .catch((e) => {
+                console.log('Error: ' + e.message + '.  Stat: ' + e.message[32]);
+                stat = e.message[32];
+                console.log(e.response);
+            },
+            this.setState({ maxValue1: '', maxValue2: '', disease1: '', disease2: '' }));
         e.preventDefault();
     }
 
     render () {
-        const { result, maxValue1, maxValue2, disease1, disease2 } = this.state;
+        const { maxValue1, maxValue2, disease1, disease2 } = this.state;
         return (
             <div>
                 <Modal className="Data-Input-Modal"
@@ -117,6 +136,9 @@ export class Prediction extends Component {
                             { value: 'МРТ', key: 'МРТ', text: 'МРТ' }
                         ]}
                     />
+                    {stat == 4 && <h2 style={{ color: 'red' }}> Выберете файл для загрузки </h2>}
+                    {stat == undefined && <h2 style={{ color: 'red' }}> Не удалось загрузить файл </h2>}
+                    {stat == 5 && <h2 style={{ color: 'red' }}> Выбран неправильный тип файла </h2>}
                     <Form onSubmit={this.onFormSubmit}>
                         <input className="Input-Field"
                             type="file"
@@ -135,7 +157,6 @@ export class Prediction extends Component {
                                 <p>Вероятность болезней:</p>
                                 <p>{disease1} - {maxValue1}%,</p>
                                 <p>{disease2} - {maxValue2}%.</p>
-
                                 <Button type="submit" onClick={() => {
                                     this.setState({ isAnalysisModalOpen: false });
                                 }}>Закрыть</Button>

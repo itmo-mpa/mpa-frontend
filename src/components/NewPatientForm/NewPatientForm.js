@@ -14,7 +14,7 @@ class NewPatientFormContainer extends React.Component {
     savePatient = (event) => {
         event.preventDefault();
         const { name, birthDate } = this.state;
-        console.log(this.state)
+        console.log(this.state);
         // TODO: попробовать отправлять на бек данные о поле пациента
         const patientData = {
             name: name,
